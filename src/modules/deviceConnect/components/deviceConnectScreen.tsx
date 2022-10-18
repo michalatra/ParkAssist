@@ -6,61 +6,31 @@ import {
   Dimensions,
   TouchableOpacity,
 } from "react-native";
-import { BluetoothDeviceStatusEnum } from "../../../models/enums/bluetoothDeviceStatusEnum";
+import { BluetoothDeviceData } from "../../../models/bluetoothDeviceData";
 import Navigation from "../../common/components/navigation";
 
-const DeviceSearchScreen = ({ navigation }: any) => {
-  const searchDevices = () => {
-    navigation.navigate("DeviceFound", {
-      devices: [
-        {
-          name: "Test Device Name 1",
-          id: "0",
-          status: BluetoothDeviceStatusEnum.CONNECTED,
-        },
-        {
-          name: "Test Device Name 2",
-          id: "1",
-          status: BluetoothDeviceStatusEnum.CONNECTED,
-        },
-        {
-          name: "Test Device Name 3",
-          id: "2",
-          status: BluetoothDeviceStatusEnum.CONNECTED,
-        },
-        {
-          name: "Test Device Name 4",
-          id: "3",
-          status: BluetoothDeviceStatusEnum.CONNECTED,
-        },
-        {
-          name: "Test Device Name 5",
-          id: "4",
-          status: BluetoothDeviceStatusEnum.CONNECTED,
-        },
-      ],
-    });
+const DeviceConnectScreen = ({ navigation, route }: any) => {
+  const device: BluetoothDeviceData = route.params.device;
+  const onConnect = () => {
+    navigation.navigate("Main", { device });
   };
 
   return (
     <View style={styles.container}>
       <Navigation title="Find Detectors Nearby" navigation={navigation} />
-      <TouchableOpacity
-        style={styles.circleContainer}
-        onLongPress={searchDevices}
-      >
+      <TouchableOpacity style={styles.circleContainer} onLongPress={onConnect}>
         <View style={styles.outerCircle}>
           <View style={styles.innerCircle}>
             <Image
               style={styles.circleIcon}
-              source={require("../../../assets/icons/bluetooth.png")}
+              source={require("../../../assets/icons/connecting.png")}
             />
           </View>
         </View>
       </TouchableOpacity>
       <View style={styles.instructionContainer}>
         <Text style={styles.instructionText}>
-          Tap Bluetooth Icon to start Detector Search
+          We're trying to connect your device...
         </Text>
       </View>
     </View>
@@ -87,7 +57,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   outerCircle: {
-    backgroundColor: "#629749",
+    backgroundColor: "#FA5788",
     borderRadius: windowWidth,
     width: windowWidth / 1.5,
     height: windowWidth / 1.5,
@@ -96,7 +66,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   innerCircle: {
-    backgroundColor: "#33691E",
+    backgroundColor: "#C2185B",
     borderRadius: windowWidth,
     width: windowWidth / 1.8,
     height: windowWidth / 1.8,
@@ -124,4 +94,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DeviceSearchScreen;
+export default DeviceConnectScreen;
