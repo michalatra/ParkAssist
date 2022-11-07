@@ -18,7 +18,10 @@ export default function App() {
           headerShown: false,
         }}
       >
-        <NavigationStack.Screen name="Welcome" component={WelcomeScreen} />
+        <NavigationStack.Screen
+            name="Welcome"
+            component={WelcomeScreen}
+        />
         <NavigationStack.Screen
           name="DeviceSearch"
           component={DeviceSearchScreen}
@@ -31,7 +34,10 @@ export default function App() {
           name="DeviceConnect"
           component={DeviceConnectScreen}
         />
-        <NavigationStack.Screen name="Main" component={MainScreen} />
+        <NavigationStack.Screen
+          name="Main"
+          component={MainScreen}
+        />
       </NavigationStack.Navigator>
     </NavigationContainer>
   );
