@@ -2,20 +2,32 @@ import { View, StyleSheet, Text } from "react-native";
 import { BluetoothDeviceData } from "../../../models/bluetoothDeviceData";
 import Navigation from "../../common/components/navigation";
 import DeviceList from "./deviceList";
+import {useEffect, useState} from "react";
+import {manager} from "../../../services/BluetoothService";
 
 const DevicesFoundScreen = ({ navigation, route }: any) => {
+  const [bluetoothState, setBluetoothState] = useState("");
+
   const devices: BluetoothDeviceData[] = route.params.devices;
 
   const handleDeviceSelect = (device: BluetoothDeviceData) => {
     navigation.navigate("DeviceConnect", { device });
   };
 
+  useEffect(() => {
+    const subscription = manager.onStateChange(state => {
+      setBluetoothState(state);
+    }, true);
+
+    return () => subscription.remove();
+  })
+
   return (
     <View style={styles.container}>
       <Navigation title="Find Detectors Nearby" navigation={navigation} />
       <DeviceList devices={devices} onSelect={handleDeviceSelect} />
       <View style={styles.instructionContainer}>
-        <Text style={styles.instructionText}>Select Device To Connect</Text>
+        <Text style={styles.instructionText}>{bluetoothState}</Text>
       </View>
     </View>
   );
