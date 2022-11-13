@@ -3,7 +3,6 @@ import { BluetoothDeviceData } from "../../../models/bluetoothDeviceData";
 import Navigation from "../../common/components/navigation";
 import DeviceList from "./deviceList";
 import {useEffect, useState} from "react";
-import {manager} from "../../../services/BluetoothService";
 
 const DevicesFoundScreen = ({ navigation, route }: any) => {
   const [bluetoothState, setBluetoothState] = useState("");
@@ -13,14 +12,6 @@ const DevicesFoundScreen = ({ navigation, route }: any) => {
   const handleDeviceSelect = (device: BluetoothDeviceData) => {
     navigation.navigate("DeviceConnect", { device });
   };
-
-  useEffect(() => {
-    const subscription = manager.onStateChange(state => {
-      setBluetoothState(state);
-    }, true);
-
-    return () => subscription.remove();
-  })
 
   return (
     <View style={styles.container}>

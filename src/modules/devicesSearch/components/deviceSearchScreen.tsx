@@ -6,8 +6,8 @@ import {
   Dimensions,
   TouchableOpacity,
 } from "react-native";
-import { BluetoothDeviceStatusEnum } from "../../../models/enums/bluetoothDeviceStatusEnum";
 import Navigation from "../../common/components/navigation";
+import {BluetoothDeviceStatusEnum} from "../../../models/enums/bluetoothDeviceStatusEnum";
 
 const DeviceSearchScreen = ({ navigation }: any) => {
   const searchDevices = () => {
