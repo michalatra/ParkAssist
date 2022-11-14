@@ -1,10 +1,10 @@
 import { View, StyleSheet, Text } from "react-native";
 import { BluetoothDeviceData } from "../../../models/bluetoothDeviceData";
 import Navigation from "../../common/components/navigation";
-import DeviceList from "./deviceList";
+import DeviceList from "./DeviceList";
 import {useEffect, useState} from "react";
 
-const DevicesFoundScreen = ({ navigation, route }: any) => {
+const BluetoothDeviceListScreen = ({ navigation, route }: any) => {
   const [bluetoothState, setBluetoothState] = useState("");
 
   const devices: BluetoothDeviceData[] = route.params.devices;
@@ -49,4 +49,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DevicesFoundScreen;
+export default BluetoothDeviceListScreen;

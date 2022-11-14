@@ -1,6 +1,6 @@
 import { ScrollView } from "react-native";
 import { BluetoothDeviceData } from "../../../models/bluetoothDeviceData";
-import DeviceTile from "./deviceTile";
+import DeviceTile from "./DeviceTile";
 
 const DeviceList = (props: {
   devices: BluetoothDeviceData[];

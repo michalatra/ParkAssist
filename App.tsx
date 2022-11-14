@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View } from "react-native";
-import WelcomeScreen from "./src/modules/welcome/components/welcomeScreen";
+import InitialScreen from "./src/modules/initial/components/InitialScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import DeviceSearchScreen from "./src/modules/devicesSearch/components/deviceSearchScreen";
-import DevicesFoundScreen from "./src/modules/devicesFound/components/defivesFoundScreen";
-import DeviceConnectScreen from "./src/modules/deviceConnect/components/deviceConnectScreen";
-import MainScreen from "./src/modules/main/components/mainScreen";
+import BluetoothSearchScreen from "./src/modules/bluetoothSearch/components/BluetoothSearchScreen";
+import BluetoothDeviceListScreen from "./src/modules/bluetoothDeviceList/components/BluetoothDeviceListScreen";
+import ConnectingBluetoothDeviceScreen from "./src/modules/connectingBluetoothDevice/components/ConnectingBluetoothDeviceScreen";
+import ControllerScreen from "./src/modules/controller/components/ControllerScreen";
 
 const NavigationStack = createNativeStackNavigator();
 
@@ -20,23 +20,23 @@ export default function App() {
       >
         <NavigationStack.Screen
             name="Welcome"
-            component={WelcomeScreen}
+            component={InitialScreen}
         />
         <NavigationStack.Screen
           name="DeviceSearch"
-          component={DeviceSearchScreen}
+          component={BluetoothSearchScreen}
         />
         <NavigationStack.Screen
           name="DeviceFound"
-          component={DevicesFoundScreen}
+          component={BluetoothDeviceListScreen}
         />
         <NavigationStack.Screen
           name="DeviceConnect"
-          component={DeviceConnectScreen}
+          component={ConnectingBluetoothDeviceScreen}
         />
         <NavigationStack.Screen
           name="Main"
-          component={MainScreen}
+          component={ControllerScreen}
         />
       </NavigationStack.Navigator>
     </NavigationContainer>

@@ -8,9 +8,9 @@ import {
 } from "react-native";
 import { BluetoothDeviceData } from "../../../models/bluetoothDeviceData";
 import Navigation from "../../common/components/navigation";
-import DeviceInfo from "./deviceInfo";
+import DeviceInfo from "./DeviceInfo";
 
-const MainScreen = ({ navigation, route }: any) => {
+const ControllerScreen = ({ navigation, route }: any) => {
   const device: BluetoothDeviceData = route.params.device;
 
   const handleMeasure = () => {};
@@ -107,4 +107,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MainScreen;
+export default ControllerScreen;

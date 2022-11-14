@@ -1,7 +1,7 @@
 import { StyleSheet, View, Image, Text } from "react-native";
 import Button from "../../common/components/button";
 
-const WelcomeScreen = ({ navigation }: any) => {
+const InitialScreen = ({ navigation }: any) => {
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
@@ -50,4 +50,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WelcomeScreen;
+export default InitialScreen;

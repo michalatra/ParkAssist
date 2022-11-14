@@ -9,7 +9,7 @@ import {
 import { BluetoothDeviceData } from "../../../models/bluetoothDeviceData";
 import Navigation from "../../common/components/navigation";
 
-const DeviceConnectScreen = ({ navigation, route }: any) => {
+const ConnectingBluetoothDeviceScreen = ({ navigation, route }: any) => {
   const device: BluetoothDeviceData = route.params.device;
   const onConnect = () => {
     navigation.navigate("Main", { device });
@@ -94,4 +94,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DeviceConnectScreen;
+export default ConnectingBluetoothDeviceScreen;

@@ -9,7 +9,7 @@ import {
 import Navigation from "../../common/components/navigation";
 import {BluetoothDeviceStatusEnum} from "../../../models/enums/bluetoothDeviceStatusEnum";
 
-const DeviceSearchScreen = ({ navigation }: any) => {
+const BluetoothSearchScreen = ({ navigation }: any) => {
   const searchDevices = () => {
     navigation.navigate("DeviceFound", {
       devices: [
@@ -124,4 +124,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DeviceSearchScreen;
+export default BluetoothSearchScreen;
