@@ -11,14 +11,17 @@ const Navigation = ({ title, navigation }: Props) => {
       >
         <Image
           style={styles.icon}
-          source={require("../../../assets/icons/chevron-left.png")}
+          source={require("../../assets/icons/chevron-left.png")}
         />
       </TouchableOpacity>
       <Text style={styles.title}>{title}</Text>
-      <TouchableOpacity style={styles.iconTouchable}>
+      <TouchableOpacity
+        style={styles.iconTouchable}
+        onPress={() => navigation.navigate("Settings")}
+      >
         <Image
           style={styles.icon}
-          source={require("../../../assets/icons/settings.png")}
+          source={require("../../assets/icons/settings.png")}
         />
       </TouchableOpacity>
     </View>

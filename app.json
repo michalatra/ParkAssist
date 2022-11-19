@@ -4,7 +4,7 @@
     "slug": "ParkAssist",
     "version": "1.0.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "updates": {
       "fallbackToCacheTimeout": 0
     },
@@ -16,7 +16,10 @@
       "bundleIdentifier": "com.michalatra.ParkAssist"
     },
     "android": {
-      "package": "com.michal.latra"
+      "package": "com.michal.latra",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION"
+      ]
     },
     "web": {
     },

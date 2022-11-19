@@ -1,11 +1,8 @@
 import { ScrollView } from "react-native";
-import { BluetoothDeviceData } from "../../../models/bluetoothDeviceData";
 import DeviceTile from "./DeviceTile";
+import { Device } from "react-native-ble-plx";
 
-const DeviceList = (props: {
-  devices: BluetoothDeviceData[];
-  onSelect: any;
-}) => {
+const DeviceList = (props: { devices: Device[]; onSelect: any }) => {
   return (
     <ScrollView>
       {props.devices.map((device) => (
