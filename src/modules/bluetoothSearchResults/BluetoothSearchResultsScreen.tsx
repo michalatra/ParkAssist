@@ -8,8 +8,9 @@ import {
   scanBluetoothDevices,
   scanningFinished$,
 } from "../../services/BluetoothService";
+import { ScreenNamesEnum } from "../../models/enums/ScreenNamesEnum";
 
-const BluetoothDeviceListScreen = ({ navigation }: any) => {
+const BluetoothSearchResultsScreen = ({ navigation }: any) => {
   const [bluetoothState, setBluetoothState] = useState("Scanning...");
   const [bluetoothDevices, setBluetoothDevices] = useState<Device[]>([]);
 
@@ -26,11 +27,15 @@ const BluetoothDeviceListScreen = ({ navigation }: any) => {
       setBluetoothDevices(devices)
     );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const handleDeviceSelect = (device: Device) => {
-    navigation.navigate("DeviceConnect", { deviceId: device.id });
+    navigation.navigate(ScreenNamesEnum.BLUETOOTH_CONNECTION_ATTEMPT, {
+      deviceId: device.id,
+    });
   };
 
   return (
@@ -44,4 +49,4 @@ const BluetoothDeviceListScreen = ({ navigation }: any) => {
   );
 };
 
-export default BluetoothDeviceListScreen;
+export default BluetoothSearchResultsScreen;

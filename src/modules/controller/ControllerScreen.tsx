@@ -1,11 +1,11 @@
 import { View, Image, TouchableOpacity, Text } from "react-native";
 import Navigation from "../common/Navigation";
 import { styles } from "../../styles/styles";
-import { startMeasurement } from "../../services/BluetoothService";
+import { ScreenNamesEnum } from "../../models/enums/ScreenNamesEnum";
 
 const ControllerScreen = ({ navigation }: any) => {
   const handleMeasure = () => {
-    startMeasurement();
+    navigation.navigate(ScreenNamesEnum.MEASUREMENT);
   };
 
   return (

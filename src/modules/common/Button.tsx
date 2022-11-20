@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
-import ButtonData from "../../models/buttonData";
+import ButtonData from "../../models/ButtonData";
 
 const Button = (props: ButtonData) => {
   const styles = StyleSheet.create({

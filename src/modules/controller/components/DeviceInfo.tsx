@@ -1,5 +1,5 @@
 import { View, Image, Text } from "react-native";
-import { BluetoothDeviceData } from "../../../models/bluetoothDeviceData";
+import { BluetoothDeviceData } from "../../../models/BluetoothDeviceData";
 import { styles } from "../../../styles/styles";
 
 const DeviceInfo = (params: { device: BluetoothDeviceData }) => {

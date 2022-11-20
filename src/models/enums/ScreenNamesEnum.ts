@@ -1,0 +1,15 @@
+export enum ScreenNamesEnum {
+  INITIAL = "initial",
+  SETTINGS = "settings",
+  CONNECTION_METHOD_SELECT = "ConnectionMethodSelect",
+  BLUETOOTH_SEARCH_INIT = "bluetoothSearchInit",
+  BLUETOOTH_SEARCH_RESULTS = "bluetoothSearchResults",
+  BLUETOOTH_CONNECTION_ATTEMPT = "bluetoothConnectionAttemptScreen",
+  WIFI_SEARCH_INIT = "wiFiSearchInit",
+  WIFI_SEARCH_RESULTS = "wiFiSearchResults",
+  WIFI_CONNECTION_ATTEMPT = "wiFiConnectionAttemptScreen",
+  DETECTORS_QUANTITY_SETUP = "detectorsQuantitySetupScreen",
+  DETECTORS_LOCATION_SETUP = "detectorsLocationSetupScreen",
+  CONTROLLER = "controllerScreen",
+  MEASUREMENT = "measurementScreen",
+}

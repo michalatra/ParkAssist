@@ -1,25 +1,13 @@
 import { Dimensions, StyleSheet } from "react-native";
+import { ColorsEnum } from "../models/enums/ColorsEnum";
 
 const windowWidth = Dimensions.get("window").width;
-const colors = {
-  white: "#FFFFFF",
-  backgroundDark: "#121212",
-  backgroundLight: "#2E2E2E",
-  yellowLight: "#FFD149",
-  yellowDark: "#FFA000",
-  pinkLight: "#FA5788",
-  pinkDark: "#C2185B",
-  greenLight: "#629749",
-  greenDark: "#33691E",
-  blueLight: "#228CDB",
-  blueDark: "#035C9E",
-};
 
 const instructionFontSize = 20;
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.backgroundDark,
+    backgroundColor: ColorsEnum.BACKGROUND_DARK,
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
@@ -46,7 +34,50 @@ export const styles = StyleSheet.create({
     marginTop: 30,
     fontSize: 48,
     fontWeight: "bold",
-    color: colors.white,
+    color: ColorsEnum.WHITE,
+  },
+
+  connectionMethodContainer: {
+    width: windowWidth * 0.9,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 20,
+    margin: 10,
+  },
+
+  connectionMethodContainerGreen: {
+    backgroundColor: ColorsEnum.GREEN_LIGHT,
+  },
+
+  connectionMethodContainerBlue: {
+    backgroundColor: ColorsEnum.BLUE_LIGHT,
+  },
+
+  connectionMethodIcon: {
+    height: "40%",
+    resizeMode: "contain",
+  },
+
+  navigationContainer: {
+    position: "relative",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    height: "20%",
+    padding: 10,
+  },
+  navigationIcon: {
+    width: 20,
+    height: "100%",
+    resizeMode: "contain",
+  },
+  navigationTitle: {
+    fontSize: 18,
+    color: "#FFF",
+    fontWeight: "bold",
   },
 
   actionContainer: {
@@ -75,19 +106,19 @@ export const styles = StyleSheet.create({
   },
 
   outerCircleYellow: {
-    backgroundColor: colors.yellowLight,
+    backgroundColor: ColorsEnum.YELLOW_LIGHT,
   },
 
   outerCircleGreen: {
-    backgroundColor: colors.greenLight,
+    backgroundColor: ColorsEnum.GREEN_LIGHT,
   },
 
   outerCircleBlue: {
-    backgroundColor: colors.blueLight,
+    backgroundColor: ColorsEnum.BLUE_LIGHT,
   },
 
   outerCirclePink: {
-    backgroundColor: colors.pinkLight,
+    backgroundColor: ColorsEnum.PINK_LIGHT,
   },
 
   innerCircle: {
@@ -100,19 +131,19 @@ export const styles = StyleSheet.create({
   },
 
   innerCircleYellow: {
-    backgroundColor: colors.yellowDark,
+    backgroundColor: ColorsEnum.YELLOW_DARK,
   },
 
   innerCircleGreen: {
-    backgroundColor: colors.greenDark,
+    backgroundColor: ColorsEnum.GREEN_DARK,
   },
 
   innerCircleBlue: {
-    backgroundColor: colors.blueDark,
+    backgroundColor: ColorsEnum.BLUE_DARK,
   },
 
   innerCirclePink: {
-    backgroundColor: colors.pinkDark,
+    backgroundColor: ColorsEnum.PINK_DARK,
   },
 
   circleIcon: {
@@ -132,13 +163,13 @@ export const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 45,
     width: "90%",
-    color: colors.white,
+    color: ColorsEnum.WHITE,
     fontWeight: "bold",
     fontSize: instructionFontSize,
   },
 
   deviceInfoContainer: {
-    backgroundColor: colors.backgroundLight,
+    backgroundColor: ColorsEnum.BACKGROUND_LIGHT,
     borderRadius: 20,
     padding: 10,
     width: windowWidth * 0.95,
@@ -148,7 +179,7 @@ export const styles = StyleSheet.create({
   },
 
   deviceInfoTitle: {
-    color: colors.white,
+    color: ColorsEnum.WHITE,
     fontWeight: "bold",
     fontSize: 20,
     marginBottom: 10,
@@ -170,7 +201,7 @@ export const styles = StyleSheet.create({
   },
 
   deviceInfoItemText: {
-    color: colors.white,
+    color: ColorsEnum.WHITE,
     fontSize: 16,
     margin: 5,
   },
@@ -199,5 +230,96 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "left",
     color: "#FFF",
+  },
+
+  detectorsQuantityContainer: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  detectorsQuantityTitle: {
+    textAlign: "center",
+    color: ColorsEnum.WHITE,
+    fontWeight: "bold",
+    fontSize: instructionFontSize,
+  },
+
+  detectorsQuantityInput: {
+    backgroundColor: ColorsEnum.BACKGROUND_MEDIUM,
+    borderRadius: 20,
+    borderColor: ColorsEnum.BORDER,
+    borderWidth: 2,
+    color: ColorsEnum.WHITE,
+    padding: 10,
+    fontSize: 16,
+    width: windowWidth * 0.8,
+    textAlign: "center",
+    marginTop: 15,
+    fontWeight: "bold",
+  },
+
+  detectorsLocationContainer: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+
+  detectorsLocationCarImage: {
+    height: "35%",
+    resizeMode: "contain",
+    marginVertical: 25,
+  },
+
+  detectorsLocationRowContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "center",
+  },
+
+  detectorsLocationCell: {
+    backgroundColor: ColorsEnum.BORDER,
+    borderRadius: 20,
+    borderColor: ColorsEnum.BACKGROUND_LIGHT,
+    borderWidth: 6,
+    width: windowWidth * 0.18,
+    height: windowWidth * 0.18,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 5,
+  },
+
+  detectorsLocationCellActive: {
+    backgroundColor: ColorsEnum.BACKGROUND_LIGHT,
+    borderColor: ColorsEnum.BORDER,
+  },
+
+  detectorsLocationCellText: {
+    color: ColorsEnum.WHITE,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+
+  measurementContainer: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+
+  measurementCarImage: {
+    height: "35%",
+    resizeMode: "contain",
+    marginVertical: 25,
+  },
+
+  measurementRowContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "center",
   },
 });

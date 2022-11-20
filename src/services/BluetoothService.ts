@@ -1,6 +1,6 @@
 import { encode, decode } from "base-64";
 import { BleManager, Characteristic, Device } from "react-native-ble-plx";
-import { BehaviorSubject, Subject } from "rxjs";
+import { BehaviorSubject, finalize, interval, Subject, takeUntil } from "rxjs";
 import { PermissionsAndroid } from "react-native";
 
 export const bluetoothManager = new BleManager();
@@ -22,6 +22,9 @@ export const connectedDeviceCharacteristic$ =
 
 const currentMeasurement = new Subject<String>();
 export const currentMeasurement$ = currentMeasurement.asObservable();
+
+const measurementFinished = new Subject<boolean>();
+export const measurementFinished$ = measurementFinished.asObservable();
 
 const isDuplicate = (device: Device): boolean => {
   return (
@@ -114,14 +117,29 @@ export const startMeasurement = () => {
     .getValue()
     ?.writeWithoutResponse(encode("START"))
     .then((characteristic) =>
-      setInterval(() => {
-        measure(characteristic);
-      }, 500)
+      interval(500)
+        .pipe(
+          takeUntil(measurementFinished$),
+          finalize(() => stop(characteristic))
+        )
+        .subscribe((_) => measure(characteristic))
     );
+
+  return currentMeasurement$;
+};
+
+export const stopMeasurement = () => {
+  measurementFinished.next(true);
 };
 
 const measure = (characteristic: Characteristic) => {
   characteristic
     .read()
-    .then((characteristic) => console.log(decode(characteristic.value)));
+    .then((characteristic) =>
+      currentMeasurement.next(decode(characteristic.value))
+    );
+};
+
+const stop = (characteristic: Characteristic) => {
+  characteristic.writeWithoutResponse(encode("STOP"));
 };

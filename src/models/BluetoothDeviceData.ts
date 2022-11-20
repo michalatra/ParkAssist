@@ -1,4 +1,4 @@
-import { BluetoothDeviceStatusEnum } from "./enums/bluetoothDeviceStatusEnum";
+import { BluetoothDeviceStatusEnum } from "./enums/BluetoothDeviceStatusEnum";
 
 export interface BluetoothDeviceData {
   name: string;

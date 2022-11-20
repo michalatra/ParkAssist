@@ -6,11 +6,12 @@ import {
   connectDevice,
   connectingFinishedSuccessfully$,
 } from "../../services/BluetoothService";
+import { ScreenNamesEnum } from "../../models/enums/ScreenNamesEnum";
 
-const ConnectingBluetoothDeviceScreen = ({ navigation, route }: any) => {
+const BluetoothConnectionAttemptScreen = ({ navigation, route }: any) => {
   const deviceId: string = route.params.deviceId;
   const onConnect = () => {
-    navigation.navigate("Main");
+    navigation.navigate(ScreenNamesEnum.DETECTORS_QUANTITY_SETUP);
   };
 
   useEffect(() => {
@@ -47,4 +48,4 @@ const ConnectingBluetoothDeviceScreen = ({ navigation, route }: any) => {
   );
 };
 
-export default ConnectingBluetoothDeviceScreen;
+export default BluetoothConnectionAttemptScreen;

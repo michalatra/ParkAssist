@@ -1,6 +1,8 @@
 import { View, Image, Text } from "react-native";
 import Button from "../common/Button";
 import { styles } from "../../styles/styles";
+import { ScreenNamesEnum } from "../../models/enums/ScreenNamesEnum";
+import { ColorsEnum } from "../../models/enums/ColorsEnum";
 
 const InitialScreen = ({ navigation }: any) => {
   return (
@@ -13,9 +15,11 @@ const InitialScreen = ({ navigation }: any) => {
         <Text style={styles.title}>Park Assist</Text>
       </View>
       <Button
-        backgroundColor="#1565C0"
+        backgroundColor={ColorsEnum.BUTTON_BLUE}
         title="Setup Detectors"
-        action={() => navigation.navigate("DeviceSearch")}
+        action={() =>
+          navigation.navigate(ScreenNamesEnum.CONNECTION_METHOD_SELECT)
+        }
       />
     </View>
   );
