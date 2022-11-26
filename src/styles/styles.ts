@@ -2,6 +2,7 @@ import { Dimensions, StyleSheet } from "react-native";
 import { ColorsEnum } from "../models/enums/ColorsEnum";
 
 const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 const instructionFontSize = 20;
 
@@ -16,7 +17,7 @@ export const styles = StyleSheet.create({
   },
 
   logoContainer: {
-    marginTop: 80,
+    marginTop: 0.2 * windowHeight,
     display: "flex",
     justifyContent: "flex-start",
     alignItems: "center",
@@ -321,5 +322,76 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-evenly",
     alignItems: "center",
+  },
+
+  modalContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+
+  modalContent: {
+    width: "80%",
+    backgroundColor: ColorsEnum.BACKGROUND_MEDIUM,
+    borderRadius: 20,
+    padding: 15,
+  },
+
+  modalIconContainer: {
+    display: "flex",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    width: "100%",
+    height: 60,
+  },
+
+  modalIcon: {
+    height: "100%",
+    resizeMode: "contain",
+  },
+
+  modalTitle: {
+    color: ColorsEnum.WHITE,
+    fontSize: 28,
+    fontWeight: "bold",
+    marginVertical: 10,
+  },
+
+  modalDescription: {
+    color: ColorsEnum.WHITE,
+    fontSize: 18,
+  },
+
+  modalButtonsContainer: {
+    marginTop: 10,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  modalButton: {
+    padding: 10,
+    margin: 10,
+    borderRadius: 10,
+  },
+
+  modalButtonAccept: {
+    backgroundColor: ColorsEnum.GREEN_ACCEPT,
+  },
+
+  modalButtonReject: {
+    backgroundColor: ColorsEnum.RED_REJECT,
+  },
+
+  modalButtonDefault: {
+    backgroundColor: ColorsEnum.BUTTON_BLUE,
+  },
+
+  modalButtonText: {
+    color: ColorsEnum.WHITE,
+    fontSize: 16,
   },
 });
