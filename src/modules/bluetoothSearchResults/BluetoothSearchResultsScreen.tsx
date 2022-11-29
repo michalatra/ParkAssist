@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import {View} from "react-native";
 import Navigation from "../common/Navigation";
 import DeviceList from "./components/DeviceList";
 import React, { useEffect, useState } from "react";
@@ -11,12 +11,13 @@ import {
 import { ScreenNamesEnum } from "../../models/enums/ScreenNamesEnum";
 
 const BluetoothSearchResultsScreen = ({ navigation }: any) => {
-  const [bluetoothState, setBluetoothState] = useState("Scanning...");
+  const [scanningState, setScanningState] = useState(true);
   const [bluetoothDevices, setBluetoothDevices] = useState<Device[]>([]);
+  const [refreshCount, setRefreshCount] = useState(0);
 
   useEffect(() => {
     const subscription = scanningFinished$.subscribe((_) =>
-      setBluetoothState("")
+      setScanningState(false)
     );
 
     return () => subscription.unsubscribe();
@@ -30,7 +31,7 @@ const BluetoothSearchResultsScreen = ({ navigation }: any) => {
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [refreshCount]);
 
   const handleDeviceSelect = (device: Device) => {
     navigation.navigate(ScreenNamesEnum.BLUETOOTH_CONNECTION_ATTEMPT, {
@@ -38,13 +39,17 @@ const BluetoothSearchResultsScreen = ({ navigation }: any) => {
     });
   };
 
+  const handleScanReload = () => {
+    console.log("Refreshing");
+    setScanningState(true);
+    setRefreshCount(refreshCount + 1);
+  }
+
   return (
+
     <View style={styles.container}>
       <Navigation title="Find Detectors Nearby" navigation={navigation} />
-      <DeviceList devices={bluetoothDevices} onSelect={handleDeviceSelect} />
-      <View style={styles.instructionContainer}>
-        <Text style={styles.instructionText}>{bluetoothState}</Text>
-      </View>
+      <DeviceList devices={bluetoothDevices} onSelect={handleDeviceSelect} refreshing={scanningState} onRefresh={handleScanReload} />
     </View>
   );
 };

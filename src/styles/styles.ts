@@ -169,6 +169,14 @@ export const styles = StyleSheet.create({
     fontSize: instructionFontSize,
   },
 
+  bluetoothDeviceList: {
+    flex: 1
+  },
+
+  bluetoothDeviceListContent: {
+    flex: 1,
+  },
+
   deviceInfoContainer: {
     backgroundColor: ColorsEnum.BACKGROUND_LIGHT,
     borderRadius: 20,
