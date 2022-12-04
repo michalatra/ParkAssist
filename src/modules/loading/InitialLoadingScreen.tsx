@@ -12,11 +12,10 @@ const InitialLoadingScreen = ({ navigation }: any) => {
       AsyncStorage,
       StorageKeysEnum.APP_INITIALIZED
     ).subscribe((initialized) => {
-      // TODO: Odkomentować poniżdzą logikę zamiast stałego wyświetlania ekranu inicjalizacji
-      navigation.replace(ScreenNamesEnum.INITIAL);
-      // !!initialized && initialized == true
-      //   ? navigation.replace(ScreenNamesEnum.CONTROLLER)
-      //   : navigation.replace(ScreenNamesEnum.INITIAL);
+      // navigation.replace(ScreenNamesEnum.INITIAL);
+      !!initialized && initialized == true
+        ? navigation.replace(ScreenNamesEnum.CONTROLLER)
+        : navigation.replace(ScreenNamesEnum.INITIAL);
     });
 
     return () => subscription.unsubscribe();

@@ -11,6 +11,7 @@ import { switchMap } from "rxjs";
 import { saveValue } from "../../../services/StorageService";
 import { StorageKeysEnum } from "../../../models/enums/StorageKeysEnum";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ScreenNamesEnum } from "../../../models/enums/ScreenNamesEnum";
 
 const BluetoothConnectionAttemptScreen = ({ navigation, route }: any) => {
   const deviceId: string = route.params.deviceId;
@@ -19,11 +20,22 @@ const BluetoothConnectionAttemptScreen = ({ navigation, route }: any) => {
   const onConnect = () => {
     connectedDevice$
       .pipe(
-        switchMap((characteristic) =>
-          saveValue(AsyncStorage, StorageKeysEnum.DEVICE, characteristic)
+        switchMap((device) =>
+          saveValue(AsyncStorage, StorageKeysEnum.DEVICE, {
+            name: device?.name,
+            id: device?.id,
+          })
         )
       )
-      .subscribe((_) => navigation.navigate(returnScreen));
+      .subscribe((_) => {
+        navigation.reset({
+          index: 0,
+          routes: [
+            { name: ScreenNamesEnum.CONTROLLER },
+            { name: returnScreen },
+          ],
+        });
+      });
   };
 
   useEffect(() => {

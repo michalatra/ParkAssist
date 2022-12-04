@@ -7,7 +7,13 @@ type Props = { title: string; navigation: any };
 const Navigation = ({ title, navigation }: Props) => {
   return (
     <View style={styles.navigationContainer}>
-      <TouchableOpacity onPress={() => navigation.goBack()}>
+      <TouchableOpacity
+        onPress={() => {
+          if (navigation.canGoBack()) {
+            navigation.goBack();
+          }
+        }}
+      >
         <Image
           style={styles.navigationIcon}
           source={require("../../assets/icons/chevron-left.png")}

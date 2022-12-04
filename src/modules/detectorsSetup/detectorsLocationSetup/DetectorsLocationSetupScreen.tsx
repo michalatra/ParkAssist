@@ -15,7 +15,7 @@ import {
 } from "../../../services/DetectorsService";
 
 const DetectorsLocationSetupScreen = ({ navigation, route }: any) => {
-  const detectorsCount = route.params.detectorsCountValue;
+  const detectorsCount = route.params.detectorsCount;
 
   const [locations, setLocations] = useState<DetectorLocationData[]>(
     getDetectorLocations()
