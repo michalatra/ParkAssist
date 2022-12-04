@@ -1,4 +1,5 @@
 export enum ScreenNamesEnum {
+  INITIAL_LOADING = "initialLoading",
   INITIAL = "initial",
   SETTINGS = "settings",
   CONNECTION_METHOD_SELECT = "ConnectionMethodSelect",

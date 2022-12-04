@@ -13,20 +13,25 @@ import DetectorsQuantitySetupScreen from "./src/modules/detectorsQuantitySetup/D
 import DetectorsLocationSetupScreen from "./src/modules/detectorsLocationSetup/DetectorsLocationSetupScreen";
 import MeasurementScreen from "./src/modules/measurement/MeasurementScreen";
 import GlobalErrorHandler from "./src/modules/errorHandler/GlobalErrorHandler";
+import InitialLoadingScreen from "./src/modules/loading/InitialLoadingScreen";
 
 const NavigationStack = createNativeStackNavigator();
 
-export default function App() {
+const App = () => {
   return (
     <ToastProvider>
       <GlobalErrorHandler>
         <NavigationContainer>
           <NavigationStack.Navigator
-            initialRouteName={ScreenNamesEnum.INITIAL}
+            initialRouteName={ScreenNamesEnum.INITIAL_LOADING}
             screenOptions={{
               headerShown: false,
             }}
           >
+            <NavigationStack.Screen
+              name={ScreenNamesEnum.INITIAL_LOADING}
+              component={InitialLoadingScreen}
+            />
             <NavigationStack.Screen
               name={ScreenNamesEnum.INITIAL}
               component={InitialScreen}
@@ -72,4 +77,6 @@ export default function App() {
       </GlobalErrorHandler>
     </ToastProvider>
   );
-}
+};
+
+export default App;
