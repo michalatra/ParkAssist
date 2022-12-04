@@ -52,6 +52,7 @@ const CustomModal = ({
           <View style={styles.modalButtonsContainer}>
             {modalButtonsData?.map((button) => (
               <ModalButton
+                key={button.text}
                 text={button.text}
                 type={button.type}
                 onClick={button.onClick}
