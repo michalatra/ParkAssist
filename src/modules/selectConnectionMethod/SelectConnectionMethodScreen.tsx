@@ -9,7 +9,9 @@ const SelectConnectionMethodScreen = ({ navigation }: any) => {
   const toast = useToast();
 
   const onBluetoothSelect = () => {
-    navigation.navigate(ScreenNamesEnum.BLUETOOTH_SEARCH_INIT);
+    navigation.navigate(ScreenNamesEnum.BLUETOOTH_SEARCH_INIT, {
+      returnScreen: ScreenNamesEnum.DETECTORS_QUANTITY_SETUP,
+    });
   };
 
   const onWiFiSelect = () => {

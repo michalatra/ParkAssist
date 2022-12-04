@@ -1,19 +1,20 @@
 import InitialScreen from "./src/modules/initial/InitialScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import BluetoothSearchInitScreen from "./src/modules/bluetoothSearchInit/BluetoothSearchInitScreen";
-import BluetoothSearchResultsScreen from "./src/modules/bluetoothSearchResults/BluetoothSearchResultsScreen";
-import BluetoothConnectionAttemptScreen from "./src/modules/bluetoothConnectionAttempt/BluetoothConnectionAttemptScreen";
+import BluetoothSearchInitScreen from "./src/modules/bluetoothSetup/bluetoothSearchInit/BluetoothSearchInitScreen";
+import BluetoothSearchResultsScreen from "./src/modules/bluetoothSetup/bluetoothSearchResults/BluetoothSearchResultsScreen";
+import BluetoothConnectionAttemptScreen from "./src/modules/bluetoothSetup/bluetoothConnectionAttempt/BluetoothConnectionAttemptScreen";
 import ControllerScreen from "./src/modules/controller/ControllerScreen";
 import SettingsScreen from "./src/modules/settings/SettingsScreen";
 import { ToastProvider } from "react-native-toast-notifications";
 import SelectConnectionMethodScreen from "./src/modules/selectConnectionMethod/SelectConnectionMethodScreen";
 import { ScreenNamesEnum } from "./src/models/enums/ScreenNamesEnum";
-import DetectorsQuantitySetupScreen from "./src/modules/detectorsQuantitySetup/DetectorsQuantitySetupScreen";
-import DetectorsLocationSetupScreen from "./src/modules/detectorsLocationSetup/DetectorsLocationSetupScreen";
+import DetectorsQuantitySetupScreen from "./src/modules/detectorsSetup/detectorsQuantitySetup/DetectorsQuantitySetupScreen";
+import DetectorsLocationSetupScreen from "./src/modules/detectorsSetup/detectorsLocationSetup/DetectorsLocationSetupScreen";
 import MeasurementScreen from "./src/modules/measurement/MeasurementScreen";
 import GlobalErrorHandler from "./src/modules/errorHandler/GlobalErrorHandler";
 import InitialLoadingScreen from "./src/modules/loading/InitialLoadingScreen";
+import DetectorsSocketSetupScreen from "./src/modules/detectorsSetup/detectorsSocketSetup/DetectorsSocketSetupScreen";
 
 const NavigationStack = createNativeStackNavigator();
 
@@ -59,6 +60,10 @@ const App = () => {
             <NavigationStack.Screen
               name={ScreenNamesEnum.DETECTORS_QUANTITY_SETUP}
               component={DetectorsQuantitySetupScreen}
+            />
+            <NavigationStack.Screen
+              name={ScreenNamesEnum.DETECTORS_SOCKET_SETUP}
+              component={DetectorsSocketSetupScreen}
             />
             <NavigationStack.Screen
               name={ScreenNamesEnum.DETECTORS_LOCATION_SETUP}

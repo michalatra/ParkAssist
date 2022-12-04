@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Text, TextInput, View } from "react-native";
-import { styles } from "../../styles/styles";
-import Navigation from "../common/Navigation";
-import { ScreenNamesEnum } from "../../models/enums/ScreenNamesEnum";
-import Button from "../common/Button";
-import { ColorsEnum } from "../../models/enums/ColorsEnum";
+import { styles } from "../../../styles/styles";
+import Navigation from "../../common/Navigation";
+import { ScreenNamesEnum } from "../../../models/enums/ScreenNamesEnum";
+import Button from "../../common/Button";
+import { ColorsEnum } from "../../../models/enums/ColorsEnum";
 import { useToast } from "react-native-toast-notifications";
+import { GlobalVariablesEnum } from "../../../models/enums/GlobalVariablesEnum";
 
 const DetectorsQuantitySetupScreen = ({ navigation }: any) => {
   const [detectorsCount, setDetectorsCount] = useState<string>("0");
@@ -16,11 +17,13 @@ const DetectorsQuantitySetupScreen = ({ navigation }: any) => {
     if (detectorsCountValue <= 0)
       return toast.show("The number of detectors must be greater than 0");
 
-    if (detectorsCountValue > 8)
-      return toast.show("The number of detectors mustn't be greater than 8");
+    if (detectorsCountValue > GlobalVariablesEnum.SOCKET_LIMIT)
+      return toast.show(
+        `The number of detectors mustn't be greater than ${GlobalVariablesEnum.SOCKET_LIMIT}`
+      );
 
-    navigation.navigate(ScreenNamesEnum.DETECTORS_LOCATION_SETUP, {
-      detectorsCountValue,
+    navigation.navigate(ScreenNamesEnum.DETECTORS_SOCKET_SETUP, {
+      detectorsCount: detectorsCountValue,
     });
   };
 

@@ -1,25 +1,26 @@
 import React, { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { styles } from "../../styles/styles";
-import Navigation from "../common/Navigation";
-import { ColorsEnum } from "../../models/enums/ColorsEnum";
-import Button from "../common/Button";
-import { DetectorLocationTypeEnum } from "../../models/enums/DetectorLocationTypeEnum";
-import { DetectorLocationData } from "../../models/DetectorLocationData";
+import { styles } from "../../../styles/styles";
+import Navigation from "../../common/Navigation";
+import { ColorsEnum } from "../../../models/enums/ColorsEnum";
+import Button from "../../common/Button";
+import { DetectorLocationTypeEnum } from "../../../models/enums/DetectorLocationTypeEnum";
+import { DetectorLocationData } from "../../../models/DetectorLocationData";
 import { useToast } from "react-native-toast-notifications";
-import { ScreenNamesEnum } from "../../models/enums/ScreenNamesEnum";
+import { ScreenNamesEnum } from "../../../models/enums/ScreenNamesEnum";
 import {
   getDetectorLocations,
   setDetectorsCount,
   setDetectorsLocations,
-} from "../../services/DetectorsService";
+} from "../../../services/DetectorsService";
 
 const DetectorsLocationSetupScreen = ({ navigation, route }: any) => {
+  const detectorsCount = route.params.detectorsCountValue;
+
   const [locations, setLocations] = useState<DetectorLocationData[]>(
     getDetectorLocations()
   );
   const [selectedDetectors, setSelectedDetectors] = useState(0);
-  const detectorsCount = route.params.detectorsCountValue;
 
   const toast = useToast();
 
@@ -80,7 +81,7 @@ const DetectorsLocationSetupScreen = ({ navigation, route }: any) => {
         </View>
         <Image
           style={styles.detectorsLocationCarImage}
-          source={require("../../assets/icons/top_shot.png")}
+          source={require("../../../assets/icons/top_shot.png")}
         />
         <View style={styles.detectorsLocationRowContainer}>
           {locations

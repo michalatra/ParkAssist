@@ -170,7 +170,7 @@ export const styles = StyleSheet.create({
   },
 
   bluetoothDeviceList: {
-    flex: 1
+    flex: 1,
   },
 
   bluetoothDeviceListContent: {
@@ -266,6 +266,47 @@ export const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 15,
     fontWeight: "bold",
+  },
+
+  detectorsSocketContainer: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+    padding: 20,
+  },
+
+  detectorsSocketTitle: {
+    textAlign: "center",
+    color: ColorsEnum.WHITE,
+    fontWeight: "bold",
+    fontSize: instructionFontSize,
+  },
+
+  detectorsSocketInputContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  detectorsSocketInput: {
+    backgroundColor: ColorsEnum.BORDER,
+    borderRadius: 20,
+    borderColor: ColorsEnum.BACKGROUND_DARK,
+    borderWidth: 6,
+    width: windowWidth * 0.18,
+    height: windowWidth * 0.18,
+    margin: 5,
+    color: ColorsEnum.WHITE,
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 20,
+  },
+
+  detectorsSocketInputError: {
+    backgroundColor: ColorsEnum.RED_REJECT,
   },
 
   detectorsLocationContainer: {

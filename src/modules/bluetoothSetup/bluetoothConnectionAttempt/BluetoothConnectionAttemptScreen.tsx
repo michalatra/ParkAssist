@@ -1,22 +1,33 @@
 import { View, Text, Image } from "react-native";
-import Navigation from "../common/Navigation";
-import { styles } from "../../styles/styles";
+import Navigation from "../../common/Navigation";
+import { styles } from "../../../styles/styles";
 import { useEffect } from "react";
 import {
-  connectDevice,
+  connectDeviceById,
+  connectedDevice$,
   connectingFinishedSuccessfully$,
-} from "../../services/BluetoothService";
-import { ScreenNamesEnum } from "../../models/enums/ScreenNamesEnum";
+} from "../../../services/BluetoothService";
+import { switchMap } from "rxjs";
+import { saveValue } from "../../../services/StorageService";
+import { StorageKeysEnum } from "../../../models/enums/StorageKeysEnum";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const BluetoothConnectionAttemptScreen = ({ navigation, route }: any) => {
   const deviceId: string = route.params.deviceId;
+  const returnScreen: string = route.params.returnScreen;
 
   const onConnect = () => {
-    navigation.navigate(ScreenNamesEnum.DETECTORS_QUANTITY_SETUP);
+    connectedDevice$
+      .pipe(
+        switchMap((characteristic) =>
+          saveValue(AsyncStorage, StorageKeysEnum.DEVICE, characteristic)
+        )
+      )
+      .subscribe((_) => navigation.navigate(returnScreen));
   };
 
   useEffect(() => {
-    connectDevice(deviceId);
+    connectDeviceById(deviceId);
   }, []);
 
   useEffect(() => {
@@ -35,7 +46,7 @@ const BluetoothConnectionAttemptScreen = ({ navigation, route }: any) => {
           <View style={[styles.innerCircle, styles.innerCirclePink]}>
             <Image
               style={styles.circleIcon}
-              source={require("../../assets/icons/connecting.png")}
+              source={require("../../../assets/icons/connecting.png")}
             />
           </View>
         </View>

@@ -1,11 +1,15 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import Navigation from "../common/Navigation";
-import { styles } from "../../styles/styles";
-import { ScreenNamesEnum } from "../../models/enums/ScreenNamesEnum";
+import Navigation from "../../common/Navigation";
+import { styles } from "../../../styles/styles";
+import { ScreenNamesEnum } from "../../../models/enums/ScreenNamesEnum";
 
-const BluetoothSearchInitScreen = ({ navigation }: any) => {
+const BluetoothSearchInitScreen = ({ navigation, route }: any) => {
+  const returnScreen: string = route.params.returnScreen;
+
   const searchDevices = () => {
-    navigation.navigate(ScreenNamesEnum.BLUETOOTH_SEARCH_RESULTS);
+    navigation.navigate(ScreenNamesEnum.BLUETOOTH_SEARCH_RESULTS, {
+      returnScreen,
+    });
   };
 
   return (
@@ -16,7 +20,7 @@ const BluetoothSearchInitScreen = ({ navigation }: any) => {
           <View style={[styles.innerCircle, styles.innerCircleBlue]}>
             <Image
               style={styles.circleIcon}
-              source={require("../../assets/icons/bluetooth.png")}
+              source={require("../../../assets/icons/bluetooth.png")}
             />
           </View>
         </View>

@@ -1,17 +1,20 @@
-import { View, Image, Text } from "react-native";
+import { Image, Text, View } from "react-native";
 import Button from "../common/Button";
 import { styles } from "../../styles/styles";
 import { ScreenNamesEnum } from "../../models/enums/ScreenNamesEnum";
 import { ColorsEnum } from "../../models/enums/ColorsEnum";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StorageKeysEnum } from "../../models/enums/StorageKeysEnum";
+import { saveValue } from "../../services/StorageService";
+import { take } from "rxjs";
 
 const InitialScreen = ({ navigation }: any) => {
   const onSetup = () => {
-    AsyncStorage.setItem(StorageKeysEnum.APP_INITIALIZED, "true").then((res) =>
-      console.log("Value saved: ", res)
-    );
-    navigation.navigate(ScreenNamesEnum.CONNECTION_METHOD_SELECT);
+    saveValue(AsyncStorage, StorageKeysEnum.APP_INITIALIZED, true)
+      .pipe(take(1))
+      .subscribe((_) =>
+        navigation.navigate(ScreenNamesEnum.CONNECTION_METHOD_SELECT)
+      );
   };
 
   return (

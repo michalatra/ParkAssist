@@ -1,7 +1,20 @@
+// @ts-ignore
 import { encode, decode } from "base-64";
 import { BleManager, Characteristic, Device } from "react-native-ble-plx";
-import { BehaviorSubject, finalize, interval, Subject, takeUntil } from "rxjs";
+import {
+  BehaviorSubject,
+  filter,
+  finalize,
+  from,
+  interval,
+  Subject,
+  take,
+  takeUntil,
+  tap,
+} from "rxjs";
 import { PermissionsAndroid } from "react-native";
+import { DetectorData } from "../models/DetectorData";
+import { BluetoothMessagesEnum } from "../models/enums/BluetoothMessagesEnum";
 
 export const bluetoothManager = new BleManager();
 
@@ -19,6 +32,9 @@ const connectedDeviceCharacteristic =
   new BehaviorSubject<Characteristic | null>(null);
 export const connectedDeviceCharacteristic$ =
   connectedDeviceCharacteristic.asObservable();
+
+const connectedDevice = new BehaviorSubject<Device | null>(null);
+export const connectedDevice$ = connectedDevice.asObservable();
 
 const currentMeasurement = new Subject<String>();
 export const currentMeasurement$ = currentMeasurement.asObservable();
@@ -48,15 +64,18 @@ const scan = () => {
 };
 
 const handleScan = (duration: number) => {
-  const permission = requestLocationPermission();
-
-  if (permission) {
-    scan();
-    setTimeout(() => {
-      bluetoothManager.stopDeviceScan();
-      scanningFinished.next(true);
-    }, duration);
-  }
+  requestLocationPermission()
+    .pipe(
+      take(1),
+      filter((permission) => permission === PermissionsAndroid.RESULTS.GRANTED)
+    )
+    .subscribe((_) => {
+      scan();
+      setTimeout(() => {
+        bluetoothManager.stopDeviceScan();
+        scanningFinished.next(true);
+      }, duration);
+    });
 };
 
 export const scanBluetoothDevices = (duration: number) => {
@@ -70,9 +89,9 @@ export const scanBluetoothDevices = (duration: number) => {
   return bluetoothDevices$;
 };
 
-export const requestLocationPermission = async () => {
-  try {
-    const granted = await PermissionsAndroid.request(
+export const requestLocationPermission = () => {
+  return from(
+    PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
       {
         title: "Location permission for bluetooth scanning",
@@ -81,24 +100,48 @@ export const requestLocationPermission = async () => {
         buttonNegative: "Cancel",
         buttonPositive: "OK",
       }
-    );
-    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      console.log("Location permission for bluetooth scanning granted");
-      return true;
-    } else {
-      console.log("Location permission for bluetooth scanning revoked");
-      return false;
-    }
-  } catch (err) {
-    console.warn(err);
-    return false;
-  }
+    )
+  ).pipe(
+    tap((result) => {
+      result === PermissionsAndroid.RESULTS.GRANTED
+        ? console.log("Location permission for bluetooth scanning granted")
+        : console.log("Location permission for bluetooth scanning revoked");
+    })
+  );
+
+  // try {
+  //   const granted = await PermissionsAndroid.request(
+  //     PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+  //     {
+  //       title: "Location permission for bluetooth scanning",
+  //       message: "wahtever",
+  //       buttonNeutral: "Ask Me Later",
+  //       buttonNegative: "Cancel",
+  //       buttonPositive: "OK",
+  //     }
+  //   );
+  //   if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+  //     console.log("Location permission for bluetooth scanning granted");
+  //     return true;
+  //   } else {
+  //     console.log("Location permission for bluetooth scanning revoked");
+  //     return false;
+  //   }
+  // } catch (err) {
+  //   console.warn(err);
+  //   return false;
+  // }
 };
 
-export const connectDevice = (deviceId: string) => {
+export const connectDeviceById = (deviceId: string) => {
   bluetoothManager
     .devices([deviceId])
-    .then((devices) => devices[0].connect())
+    .then((devices) => connectDevice(devices[0]));
+};
+
+export const connectDevice = (device: Device) => {
+  device
+    .connect()
     .then((d) => d.discoverAllServicesAndCharacteristics())
     .then((d) =>
       d.readCharacteristicForService(
@@ -107,15 +150,30 @@ export const connectDevice = (deviceId: string) => {
       )
     )
     .then((characteristic) => {
+      connectedDevice.next(device);
       connectedDeviceCharacteristic.next(characteristic);
       connectingFinishedSuccessfully.next(true);
     });
 };
 
+export const setupWiredDetectors = (detectors: DetectorData[]) => {
+  let message = BluetoothMessagesEnum.SET_WIRED.toString();
+  detectors.forEach(
+    (detector) =>
+      (message += (parseInt(detector.socketIndex) - 1).toString() + ",")
+  );
+
+  console.log("Writing: ", message);
+
+  connectedDeviceCharacteristic
+    .getValue()
+    ?.writeWithoutResponse(encode(message));
+};
+
 export const startMeasurement = () => {
   connectedDeviceCharacteristic
     .getValue()
-    ?.writeWithoutResponse(encode("START"))
+    ?.writeWithoutResponse(encode(BluetoothMessagesEnum.START.toString()))
     .then((characteristic) =>
       interval(500)
         .pipe(
@@ -141,5 +199,7 @@ const measure = (characteristic: Characteristic) => {
 };
 
 const stop = (characteristic: Characteristic) => {
-  characteristic.writeWithoutResponse(encode("STOP"));
+  characteristic.writeWithoutResponse(
+    encode(BluetoothMessagesEnum.STOP.toString())
+  );
 };
