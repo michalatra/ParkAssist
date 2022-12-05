@@ -9,6 +9,9 @@ import { ColorsEnum } from "../../../models/enums/ColorsEnum";
 import Button from "../../common/Button";
 import { setupWiredDetectors } from "../../../services/BluetoothService";
 import { ScreenNamesEnum } from "../../../models/enums/ScreenNamesEnum";
+import { saveValue } from "../../../services/StorageService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { StorageKeysEnum } from "../../../models/enums/StorageKeysEnum";
 
 const generateDetectorsList = (detectorsCount: string): DetectorData[] => {
   const detectors = [];
@@ -38,6 +41,9 @@ const DetectorsSocketSetupScreen = ({ navigation, route }: any) => {
       return toast.show("Assign correct socket index to all detectors");
 
     setupWiredDetectors(detectors);
+
+    saveValue(AsyncStorage, StorageKeysEnum.WIRED_DETECTORS, detectors);
+
     navigation.navigate(ScreenNamesEnum.DETECTORS_LOCATION_SETUP, {
       detectorsCount: detectors.length,
     });

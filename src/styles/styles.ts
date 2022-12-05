@@ -4,7 +4,7 @@ import { ColorsEnum } from "../models/enums/ColorsEnum";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const instructionFontSize = 20;
+const instructionFontSize = 18;
 
 export const styles = StyleSheet.create({
   container: {
@@ -14,6 +14,17 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
     paddingBottom: 20,
+  },
+
+  centeredContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
+  },
+
+  hidden: {
+    opacity: 0,
   },
 
   logoContainer: {
@@ -67,7 +78,7 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
-    height: "20%",
+    height: "15%",
     padding: 10,
   },
   navigationIcon: {
@@ -190,8 +201,16 @@ export const styles = StyleSheet.create({
   deviceInfoTitle: {
     color: ColorsEnum.WHITE,
     fontWeight: "bold",
-    fontSize: 20,
+    fontSize: 16,
     marginBottom: 10,
+  },
+
+  deviceInfoItemsContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    flexDirection: "column",
+    width: "100%",
   },
 
   deviceInfoItem: {
@@ -203,15 +222,15 @@ export const styles = StyleSheet.create({
   },
 
   deviceInfoItemIcon: {
-    width: 25,
-    height: 25,
+    width: 20,
+    height: 20,
     margin: 8,
     resizeMode: "contain",
   },
 
   deviceInfoItemText: {
     color: ColorsEnum.WHITE,
-    fontSize: 16,
+    fontSize: 13,
     margin: 5,
   },
 

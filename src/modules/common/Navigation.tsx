@@ -8,6 +8,7 @@ const Navigation = ({ title, navigation }: Props) => {
   return (
     <View style={styles.navigationContainer}>
       <TouchableOpacity
+        style={navigation.canGoBack() ? null : styles.hidden}
         onPress={() => {
           if (navigation.canGoBack()) {
             navigation.goBack();

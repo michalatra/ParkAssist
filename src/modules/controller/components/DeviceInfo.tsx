@@ -1,14 +1,15 @@
 import React from "react";
-import { View, Image, Text } from "react-native";
-import { BluetoothDeviceData } from "../../../models/BluetoothDeviceData";
+import { View, Image, Text, ActivityIndicator } from "react-native";
 import { styles } from "../../../styles/styles";
 
-const DeviceInfo = ({ device }: any) => {
+const DeviceInfo = ({ device, loading }: any) => {
   return (
     <View style={styles.deviceInfoContainer}>
-      {device ? (
-        <React.Fragment>
-          <Text style={styles.deviceInfoTitle}>Device Info</Text>
+      <Text style={styles.deviceInfoTitle}>Detectors Status</Text>
+      {loading ? (
+        <ActivityIndicator />
+      ) : device ? (
+        <View style={styles.deviceInfoItemsContainer}>
           <View style={styles.deviceInfoItem}>
             <Image
               style={styles.deviceInfoItemIcon}
@@ -23,7 +24,7 @@ const DeviceInfo = ({ device }: any) => {
             />
             <Text style={styles.deviceInfoItemText}>{device.status}</Text>
           </View>
-        </React.Fragment>
+        </View>
       ) : null}
     </View>
   );

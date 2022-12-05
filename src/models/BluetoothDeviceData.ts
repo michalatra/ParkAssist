@@ -1,7 +1,7 @@
-import { BluetoothDeviceStatusEnum } from "./enums/BluetoothDeviceStatusEnum";
+import { ConnectionStatus } from "./enums/ConnectionStatus";
 
 export interface BluetoothDeviceData {
   name: string;
   id: string;
-  status?: BluetoothDeviceStatusEnum;
+  status?: ConnectionStatus;
 }

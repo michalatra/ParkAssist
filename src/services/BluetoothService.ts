@@ -108,39 +108,18 @@ export const requestLocationPermission = () => {
         : console.log("Location permission for bluetooth scanning revoked");
     })
   );
-
-  // try {
-  //   const granted = await PermissionsAndroid.request(
-  //     PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-  //     {
-  //       title: "Location permission for bluetooth scanning",
-  //       message: "wahtever",
-  //       buttonNeutral: "Ask Me Later",
-  //       buttonNegative: "Cancel",
-  //       buttonPositive: "OK",
-  //     }
-  //   );
-  //   if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-  //     console.log("Location permission for bluetooth scanning granted");
-  //     return true;
-  //   } else {
-  //     console.log("Location permission for bluetooth scanning revoked");
-  //     return false;
-  //   }
-  // } catch (err) {
-  //   console.warn(err);
-  //   return false;
-  // }
 };
 
 export const connectDeviceById = (deviceId: string) => {
-  bluetoothManager
-    .devices([deviceId])
-    .then((devices) => connectDevice(devices[0]));
+  return from(
+    bluetoothManager
+      .devices([deviceId])
+      .then((devices) => connectDevice(devices[0]))
+  );
 };
 
-export const connectDevice = (device: Device) => {
-  device
+const connectDevice = (device: Device) => {
+  return device
     .connect()
     .then((d) => d.discoverAllServicesAndCharacteristics())
     .then((d) =>
@@ -153,6 +132,7 @@ export const connectDevice = (device: Device) => {
       connectedDevice.next(device);
       connectedDeviceCharacteristic.next(characteristic);
       connectingFinishedSuccessfully.next(true);
+      return device;
     });
 };
 
