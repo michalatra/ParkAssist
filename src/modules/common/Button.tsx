@@ -6,12 +6,13 @@ const Button = (props: ButtonData) => {
     btn: {
       backgroundColor: props.backgroundColor,
       borderRadius: 20,
-      paddingHorizontal: 50,
-      paddingVertical: 20,
+      paddingHorizontal: 30,
+      paddingVertical: 15,
+      elevation: 20,
     },
     btnText: {
       color: "#FFF",
-      fontSize: 20,
+      fontSize: 14,
       fontWeight: "bold",
     },
   });

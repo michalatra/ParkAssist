@@ -11,7 +11,9 @@ import {
 import { ScreenNamesEnum } from "../../../models/enums/ScreenNamesEnum";
 
 const BluetoothSearchResultsScreen = ({ navigation, route }: any) => {
-  const returnScreen: string = route.params.returnScreen;
+  const returnScreen: string = !!route.params?.returnScreen
+    ? route.params.returnScreen
+    : ScreenNamesEnum.CONTROLLER;
 
   const [scanningState, setScanningState] = useState(true);
   const [bluetoothDevices, setBluetoothDevices] = useState<Device[]>([]);
@@ -50,7 +52,11 @@ const BluetoothSearchResultsScreen = ({ navigation, route }: any) => {
 
   return (
     <View style={styles.container}>
-      <Navigation title="Find Detectors Nearby" navigation={navigation} />
+      <Navigation
+        title="Find Detectors Nearby"
+        navigation={navigation}
+        showSettings={false}
+      />
       <DeviceList
         devices={bluetoothDevices}
         onSelect={handleDeviceSelect}

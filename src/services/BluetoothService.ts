@@ -15,6 +15,7 @@ import {
 import { PermissionsAndroid } from "react-native";
 import { DetectorData } from "../models/DetectorData";
 import { BluetoothMessagesEnum } from "../models/enums/BluetoothMessagesEnum";
+import { BluetoothErrorEnum } from "../models/enums/BluetoothErrorEnum";
 
 export const bluetoothManager = new BleManager();
 
@@ -27,6 +28,9 @@ export const bluetoothDevices$ = bluetoothDevices.asObservable();
 const connectingFinishedSuccessfully = new Subject<boolean>();
 export const connectingFinishedSuccessfully$ =
   connectingFinishedSuccessfully.asObservable();
+
+const deviceHasDisconnected = new Subject<boolean>();
+export const deviceHasDisconnected$ = deviceHasDisconnected.asObservable();
 
 const connectedDeviceCharacteristic =
   new BehaviorSubject<Characteristic | null>(null);
@@ -41,6 +45,9 @@ export const currentMeasurement$ = currentMeasurement.asObservable();
 
 const measurementFinished = new Subject<boolean>();
 export const measurementFinished$ = measurementFinished.asObservable();
+
+const bluetoothError = new Subject<BluetoothErrorEnum>();
+export const bluetoothError$ = bluetoothError.asObservable();
 
 const isDuplicate = (device: Device): boolean => {
   return (
@@ -111,29 +118,49 @@ export const requestLocationPermission = () => {
 };
 
 export const connectDeviceById = (deviceId: string) => {
+  console.log("Connecting device...");
   return from(
     bluetoothManager
       .devices([deviceId])
-      .then((devices) => connectDevice(devices[0]))
+      .then((devices) =>
+        devices.length > 0 ? connectDevice(devices[0]) : Promise.reject()
+      )
   );
 };
 
 const connectDevice = (device: Device) => {
   return device
-    .connect()
-    .then((d) => d.discoverAllServicesAndCharacteristics())
-    .then((d) =>
-      d.readCharacteristicForService(
-        "4fafc201-1fb5-459e-8fcc-c5c9c331914b",
-        "beb5483e-36e1-4688-b7f5-ea07361b26a8"
-      )
-    )
-    .then((characteristic) => {
-      connectedDevice.next(device);
-      connectedDeviceCharacteristic.next(characteristic);
-      connectingFinishedSuccessfully.next(true);
-      return device;
-    });
+    .isConnected()
+    .then((isConnected) => {
+      if (isConnected) {
+        connectingFinishedSuccessfully.next(true);
+        return device;
+      } else {
+        return device
+          .connect()
+          .then((d) => d.discoverAllServicesAndCharacteristics())
+          .then((d) =>
+            d.readCharacteristicForService(
+              "4fafc201-1fb5-459e-8fcc-c5c9c331914b",
+              "beb5483e-36e1-4688-b7f5-ea07361b26a8"
+            )
+          )
+          .then((characteristic) => {
+            connectedDevice.next(device);
+            connectedDeviceCharacteristic.next(characteristic);
+            connectingFinishedSuccessfully.next(true);
+            device.onDisconnected(() => {
+              connectedDevice.next(null);
+              deviceHasDisconnected.next(true);
+            });
+            return device;
+          })
+          .catch((_) =>
+            bluetoothError.next(BluetoothErrorEnum.CONNECTING_ERROR)
+          );
+      }
+    })
+    .catch((_) => bluetoothError.next(BluetoothErrorEnum.CONNECTING_ERROR));
 };
 
 export const setupWiredDetectors = (detectors: DetectorData[]) => {
@@ -145,9 +172,14 @@ export const setupWiredDetectors = (detectors: DetectorData[]) => {
 
   console.log("Writing: ", message);
 
-  connectedDeviceCharacteristic
-    .getValue()
-    ?.writeWithoutResponse(encode(message));
+  return from(
+    connectedDeviceCharacteristic.getValue()
+      ? connectedDeviceCharacteristic
+          .getValue()!
+          .writeWithoutResponse(encode(message))
+          .catch((_) => bluetoothError.next(BluetoothErrorEnum.WRITING_ERROR))
+      : Promise.reject()
+  );
 };
 
 export const startMeasurement = () => {
@@ -155,13 +187,14 @@ export const startMeasurement = () => {
     .getValue()
     ?.writeWithoutResponse(encode(BluetoothMessagesEnum.START.toString()))
     .then((characteristic) =>
-      interval(500)
+      interval(200)
         .pipe(
           takeUntil(measurementFinished$),
           finalize(() => stop(characteristic))
         )
         .subscribe((_) => measure(characteristic))
-    );
+    )
+    .catch((_) => bluetoothError.next(BluetoothErrorEnum.WRITING_ERROR));
 
   return currentMeasurement$;
 };
@@ -175,11 +208,12 @@ const measure = (characteristic: Characteristic) => {
     .read()
     .then((characteristic) =>
       currentMeasurement.next(decode(characteristic.value))
-    );
+    )
+    .catch((_) => bluetoothError.next(BluetoothErrorEnum.READING_ERROR));
 };
 
 const stop = (characteristic: Characteristic) => {
-  characteristic.writeWithoutResponse(
-    encode(BluetoothMessagesEnum.STOP.toString())
-  );
+  characteristic
+    .writeWithoutResponse(encode(BluetoothMessagesEnum.STOP.toString()))
+    .catch((_) => bluetoothError.next(BluetoothErrorEnum.WRITING_ERROR));
 };

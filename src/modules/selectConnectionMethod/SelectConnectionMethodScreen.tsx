@@ -21,7 +21,11 @@ const SelectConnectionMethodScreen = ({ navigation }: any) => {
 
   return (
     <View style={styles.container}>
-      <Navigation title="Find Detectors Nearby" navigation={navigation} />
+      <Navigation
+        title="Find Detectors Nearby"
+        navigation={navigation}
+        showSettings={false}
+      />
       <TouchableOpacity
         onPress={onBluetoothSelect}
         style={[

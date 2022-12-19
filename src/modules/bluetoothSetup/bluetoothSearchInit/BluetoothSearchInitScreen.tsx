@@ -4,7 +4,9 @@ import { styles } from "../../../styles/styles";
 import { ScreenNamesEnum } from "../../../models/enums/ScreenNamesEnum";
 
 const BluetoothSearchInitScreen = ({ navigation, route }: any) => {
-  const returnScreen: string = route.params.returnScreen;
+  const returnScreen: string = route.params?.returnScreen
+    ? route.params.returnScreen
+    : ScreenNamesEnum.CONTROLLER;
 
   const searchDevices = () => {
     navigation.navigate(ScreenNamesEnum.BLUETOOTH_SEARCH_RESULTS, {
@@ -14,7 +16,11 @@ const BluetoothSearchInitScreen = ({ navigation, route }: any) => {
 
   return (
     <View style={styles.container}>
-      <Navigation title="Find Detectors Nearby" navigation={navigation} />
+      <Navigation
+        title="Find Detectors Nearby"
+        navigation={navigation}
+        showSettings={false}
+      />
       <TouchableOpacity style={styles.circleContainer} onPress={searchDevices}>
         <View style={[styles.outerCircle, styles.outerCircleBlue]}>
           <View style={[styles.innerCircle, styles.innerCircleBlue]}>
@@ -25,7 +31,7 @@ const BluetoothSearchInitScreen = ({ navigation, route }: any) => {
           </View>
         </View>
       </TouchableOpacity>
-      <View style={styles.instructionContainer}>
+      <View style={styles.instructionContainerStandalone}>
         <Text style={styles.instructionText}>
           Tap Bluetooth Icon to start Detector Search
         </Text>

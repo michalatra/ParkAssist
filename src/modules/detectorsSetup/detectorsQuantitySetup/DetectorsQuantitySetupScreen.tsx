@@ -8,7 +8,11 @@ import { ColorsEnum } from "../../../models/enums/ColorsEnum";
 import { useToast } from "react-native-toast-notifications";
 import { GlobalVariablesEnum } from "../../../models/enums/GlobalVariablesEnum";
 
-const DetectorsQuantitySetupScreen = ({ navigation }: any) => {
+const DetectorsQuantitySetupScreen = ({ navigation, route }: any) => {
+  const returnScreen: string = !!route.params?.returnScreen
+    ? route.params.returnScreen
+    : ScreenNamesEnum.CONTROLLER;
+
   const [detectorsCount, setDetectorsCount] = useState<string>("0");
   const toast = useToast();
 
@@ -24,12 +28,17 @@ const DetectorsQuantitySetupScreen = ({ navigation }: any) => {
 
     navigation.navigate(ScreenNamesEnum.DETECTORS_SOCKET_SETUP, {
       detectorsCount: detectorsCountValue,
+      returnScreen,
     });
   };
 
   return (
     <View style={styles.container}>
-      <Navigation title="Setup Detectors" navigation={navigation} />
+      <Navigation
+        title="Setup Detectors"
+        navigation={navigation}
+        showSettings={false}
+      />
       <View style={styles.detectorsQuantityContainer}>
         <Text style={styles.detectorsQuantityTitle}>
           Enter the number of detectors

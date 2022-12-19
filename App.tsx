@@ -15,16 +15,19 @@ import MeasurementScreen from "./src/modules/measurement/MeasurementScreen";
 import GlobalErrorHandler from "./src/modules/errorHandler/GlobalErrorHandler";
 import InitialLoadingScreen from "./src/modules/loading/InitialLoadingScreen";
 import DetectorsSocketSetupScreen from "./src/modules/detectorsSetup/detectorsSocketSetup/DetectorsSocketSetupScreen";
+import { enableScreens } from "react-native-screens";
 
 const NavigationStack = createNativeStackNavigator();
 
 const App = () => {
+  enableScreens();
   return (
     <ToastProvider>
       <GlobalErrorHandler>
         <NavigationContainer>
           <NavigationStack.Navigator
             initialRouteName={ScreenNamesEnum.INITIAL_LOADING}
+            // detachInactiveScreens={true}
             screenOptions={{
               headerShown: false,
             }}

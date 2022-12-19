@@ -21,6 +21,7 @@ const DeviceList = ({
   return (
     <ScrollView
       contentContainerStyle={styles.bluetoothDeviceList}
+      style={styles.w100}
       refreshControl={
         <RefreshControl
           refreshing={refreshing}
@@ -30,7 +31,12 @@ const DeviceList = ({
         />
       }
     >
-      <View style={styles.bluetoothDeviceListContent}>
+      <View
+        style={[
+          styles.bluetoothDeviceListContent,
+          refreshing ? styles.bluetoothDeviceListContentRefresh : null,
+        ]}
+      >
         <ScrollView>
           {devices.map((device) => (
             <DeviceTile
@@ -40,7 +46,7 @@ const DeviceList = ({
             />
           ))}
         </ScrollView>
-        <View style={styles.instructionContainer}>
+        <View style={styles.instructionContainerStandalone}>
           <Text style={styles.instructionText}>Select your device</Text>
         </View>
       </View>

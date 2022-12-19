@@ -12,6 +12,7 @@ import { ScreenNamesEnum } from "../../../models/enums/ScreenNamesEnum";
 import { saveValue } from "../../../services/StorageService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StorageKeysEnum } from "../../../models/enums/StorageKeysEnum";
+import { catchError, empty, switchMap, take } from "rxjs";
 
 const generateDetectorsList = (detectorsCount: string): DetectorData[] => {
   const detectors = [];
@@ -24,6 +25,10 @@ const generateDetectorsList = (detectorsCount: string): DetectorData[] => {
 };
 
 const DetectorsSocketSetupScreen = ({ navigation, route }: any) => {
+  const returnScreen: string = !!route.params?.returnScreen
+    ? route.params.returnScreen
+    : ScreenNamesEnum.CONTROLLER;
+
   const [detectors, setDetectors] = useState(
     generateDetectorsList(route.params.detectorsCount)
   );
@@ -40,13 +45,28 @@ const DetectorsSocketSetupScreen = ({ navigation, route }: any) => {
     if (detectorWithError || detectorWithoutSocket)
       return toast.show("Assign correct socket index to all detectors");
 
-    setupWiredDetectors(detectors);
+    setupWiredDetectors(detectors)
+      .pipe(
+        take(1),
+        switchMap(() =>
+          saveValue(AsyncStorage, StorageKeysEnum.WIRED_DETECTORS, detectors)
+        ),
+        catchError((_) => {
+          toast.show("An error occurred while setting up detectors", {
+            type: "danger",
+          });
+          navigation.goBack();
+          return empty();
+        })
+      )
+      .subscribe((_) =>
+        navigation.navigate(ScreenNamesEnum.DETECTORS_LOCATION_SETUP, {
+          detectorsCount: detectors.length,
+          returnScreen,
+        })
+      );
 
     saveValue(AsyncStorage, StorageKeysEnum.WIRED_DETECTORS, detectors);
-
-    navigation.navigate(ScreenNamesEnum.DETECTORS_LOCATION_SETUP, {
-      detectorsCount: detectors.length,
-    });
   };
 
   const handleAssignInputValue = (socketIndex: string, id: number) => {
@@ -79,7 +99,11 @@ const DetectorsSocketSetupScreen = ({ navigation, route }: any) => {
 
   return (
     <View style={styles.container}>
-      <Navigation title="Setup Detectors" navigation={navigation} />
+      <Navigation
+        title="Setup Detectors"
+        navigation={navigation}
+        showSettings={false}
+      />
       <View style={styles.detectorsSocketContainer}>
         <Text style={styles.detectorsSocketTitle}>
           Enter socket ids corresponding with your detectors

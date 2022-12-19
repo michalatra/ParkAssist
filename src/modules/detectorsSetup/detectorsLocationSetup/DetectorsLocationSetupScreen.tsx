@@ -13,8 +13,16 @@ import {
   setDetectorsCount,
   setDetectorsLocations,
 } from "../../../services/DetectorsService";
+import { saveValue } from "../../../services/StorageService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { StorageKeysEnum } from "../../../models/enums/StorageKeysEnum";
+import { DetectorLocationStorageData } from "../../../models/DetectorLocationStorageData";
 
 const DetectorsLocationSetupScreen = ({ navigation, route }: any) => {
+  const returnScreen: string = !!route.params?.returnScreen
+    ? route.params.returnScreen
+    : ScreenNamesEnum.CONTROLLER;
+
   const detectorsCount = route.params.detectorsCount;
 
   const [locations, setLocations] = useState<DetectorLocationData[]>(
@@ -32,7 +40,21 @@ const DetectorsLocationSetupScreen = ({ navigation, route }: any) => {
 
     setDetectorsCount(selectedDetectors);
     setDetectorsLocations(locations);
-    navigation.navigate(ScreenNamesEnum.CONTROLLER);
+    saveValue(
+      AsyncStorage,
+      StorageKeysEnum.WIRED_DETECTORS_LOCATIONS,
+      getLocationsToStore()
+    );
+    navigation.navigate(returnScreen);
+  };
+
+  const getLocationsToStore = (): DetectorLocationStorageData[] => {
+    return locations
+      .filter((l) => l.active)
+      .map((l) => ({
+        locationIdx: l.locationType + l.location,
+        detectorIdx: l.index!,
+      }));
   };
 
   const onLocationPressed = (location: DetectorLocationData) => {
@@ -57,7 +79,11 @@ const DetectorsLocationSetupScreen = ({ navigation, route }: any) => {
 
   return (
     <View style={styles.container}>
-      <Navigation title="Setup Detectors" navigation={navigation} />
+      <Navigation
+        title="Setup Detectors"
+        navigation={navigation}
+        showSettings={false}
+      />
       <View style={styles.detectorsLocationContainer}>
         <View style={styles.detectorsLocationRowContainer}>
           {locations
