@@ -1,4 +1,4 @@
 export enum DetectorLocationTypeEnum {
-  FRONT = 0,
-  BACK = 4,
+  FRONT = "front",
+  BACK = "back",
 }

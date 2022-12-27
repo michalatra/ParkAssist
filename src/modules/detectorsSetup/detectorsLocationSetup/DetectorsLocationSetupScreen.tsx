@@ -43,18 +43,10 @@ const DetectorsLocationSetupScreen = ({ navigation, route }: any) => {
     saveValue(
       AsyncStorage,
       StorageKeysEnum.WIRED_DETECTORS_LOCATIONS,
-      getLocationsToStore()
+      // getLocationsToStore()
+      locations
     );
     navigation.navigate(returnScreen);
-  };
-
-  const getLocationsToStore = (): DetectorLocationStorageData[] => {
-    return locations
-      .filter((l) => l.active)
-      .map((l) => ({
-        locationIdx: l.locationType + l.location,
-        detectorIdx: l.index!,
-      }));
   };
 
   const onLocationPressed = (location: DetectorLocationData) => {

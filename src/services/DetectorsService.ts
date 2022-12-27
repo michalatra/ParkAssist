@@ -11,41 +11,49 @@ export const getDetectorLocations = (): DetectorLocationData[] => {
       locationType: DetectorLocationTypeEnum.FRONT,
       location: DetectorLocationEnum.LEFT,
       active: false,
+      measurement: 0,
     },
     {
       locationType: DetectorLocationTypeEnum.FRONT,
       location: DetectorLocationEnum.CENTER_LEFT,
       active: false,
+      measurement: 0,
     },
     {
       locationType: DetectorLocationTypeEnum.FRONT,
       location: DetectorLocationEnum.CENTER_RIGHT,
       active: false,
+      measurement: 0,
     },
     {
       locationType: DetectorLocationTypeEnum.FRONT,
       location: DetectorLocationEnum.RIGHT,
       active: false,
+      measurement: 0,
     },
     {
       locationType: DetectorLocationTypeEnum.BACK,
       location: DetectorLocationEnum.LEFT,
       active: false,
+      measurement: 0,
     },
     {
       locationType: DetectorLocationTypeEnum.BACK,
       location: DetectorLocationEnum.CENTER_LEFT,
       active: false,
+      measurement: 0,
     },
     {
       locationType: DetectorLocationTypeEnum.BACK,
       location: DetectorLocationEnum.CENTER_RIGHT,
       active: false,
+      measurement: 0,
     },
     {
       locationType: DetectorLocationTypeEnum.BACK,
       location: DetectorLocationEnum.RIGHT,
       active: false,
+      measurement: 0,
     },
   ];
 };

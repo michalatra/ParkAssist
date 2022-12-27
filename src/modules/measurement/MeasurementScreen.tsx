@@ -17,11 +17,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StorageKeysEnum } from "../../models/enums/StorageKeysEnum";
 import { switchMap, tap } from "rxjs";
 import { DetectorLocationStorageData } from "../../models/DetectorLocationStorageData";
+import { DetectorLocationData } from "../../models/DetectorLocationData";
 
 const MeasurementScreen = ({ navigation }: any) => {
   const [measurement, setMeasurement] = useState<String>("");
   const [detectorLocations, setDetectorLocations] = useState<
-    DetectorLocationStorageData[]
+    DetectorLocationData[]
   >([]);
   const toast = useToast();
   const onStop = () => {
@@ -39,9 +40,9 @@ const MeasurementScreen = ({ navigation }: any) => {
       .pipe(
         tap((locations) => {
           setDetectorLocations(locations);
-          locations.forEach((location: DetectorLocationStorageData) => {
+          locations.forEach((location: DetectorLocationData) => {
             toast.show(
-              `Detector: ${location.detectorIdx}, Location: ${location.locationIdx}`
+              `Detector: ${location.index}, Location type: ${location.locationType}, Location: ${location.location} `
             );
           });
         }),
@@ -75,6 +76,19 @@ const MeasurementScreen = ({ navigation }: any) => {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  const handleNewMeasurement = (measurement: string) => {
+    const measurementArr: string[] = measurement.split(";");
+    const locations = [...detectorLocations];
+
+    for (let i = 0; i < measurementArr.length; i++) {
+      let loc = locations.find((l) => l.index && l.active && l.index === i);
+      loc!.measurement = +measurementArr[i];
+    }
+
+    setDetectorLocations(locations);
+    console.log(locations);
+  };
 
   return (
     <View style={styles.container}>

@@ -6,4 +6,5 @@ export interface DetectorLocationData {
   location: DetectorLocationEnum;
   active: boolean;
   index?: number;
+  measurement: number;
 }
