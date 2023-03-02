@@ -12,7 +12,7 @@ import {
   takeUntil,
   tap,
 } from "rxjs";
-import { PermissionsAndroid } from "react-native";
+import {PermissionsAndroid, Platform} from "react-native";
 import { DetectorData } from "../models/DetectorData";
 import { BluetoothMessagesEnum } from "../models/enums/BluetoothMessagesEnum";
 import { BluetoothErrorEnum } from "../models/enums/BluetoothErrorEnum";
@@ -97,9 +97,33 @@ export const scanBluetoothDevices = (duration: number) => {
 };
 
 export const requestLocationPermission = () => {
+  if (Platform.OS === "android" && Platform.Version >= 23) {
+    // Scanning: Checking permissions...
+    const enabled = PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+    if (!enabled) {
+      // Scanning: Permissions disabled, showing...
+      const granted = PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+        // Scanning: Permissions not granted, aborting...
+        return;
+      }
+    }
+  }
   return from(
+    // if (Platform.OS === "android" && Platform.Version >= 23) {
+    //   // Scanning: Checking permissions...
+    //   const enabled = PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+    //   if (!enabled) {
+    //     // Scanning: Permissions disabled, showing...
+    //     const granted = PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+    //     if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+    //       // Scanning: Permissions not granted, aborting...
+    //       return;
+    //     }
+    //   }
+    // }
     PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       {
         title: "Location permission for bluetooth scanning",
         message: "wahtever",
