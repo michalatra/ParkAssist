@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import { Text, TextInput, View } from "react-native";
-import { styles } from "../../../styles/styles";
-import Navigation from "../../common/Navigation";
-import { DetectorData } from "../../../models/DetectorData";
+import { styles } from "../../../../styles/styles";
+import Navigation from "../../../common/Navigation";
+import { DetectorData } from "../../../../models/DetectorData";
 import { useToast } from "react-native-toast-notifications";
-import { GlobalVariablesEnum } from "../../../models/enums/GlobalVariablesEnum";
-import { ColorsEnum } from "../../../models/enums/ColorsEnum";
-import Button from "../../common/Button";
-import { setupWiredDetectors } from "../../../services/BluetoothService";
-import { ScreenNamesEnum } from "../../../models/enums/ScreenNamesEnum";
-import { saveValue } from "../../../services/StorageService";
+import { GlobalVariablesEnum } from "../../../../models/enums/GlobalVariablesEnum";
+import { ColorsEnum } from "../../../../models/enums/ColorsEnum";
+import Button from "../../../common/Button";
+import { setupWiredDetectors } from "../../../../services/BluetoothService";
+import { ScreenNamesEnum } from "../../../../models/enums/ScreenNamesEnum";
+import { saveValue } from "../../../../services/StorageService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { StorageKeysEnum } from "../../../models/enums/StorageKeysEnum";
+import { StorageKeysEnum } from "../../../../models/enums/StorageKeysEnum";
 import { catchError, empty, switchMap, take } from "rxjs";
 
 const generateDetectorsList = (detectorsCount: string): DetectorData[] => {

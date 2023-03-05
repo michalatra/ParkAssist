@@ -1,21 +1,22 @@
 import InitialScreen from "./src/modules/initial/InitialScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import BluetoothSearchInitScreen from "./src/modules/bluetoothSetup/bluetoothSearchInit/BluetoothSearchInitScreen";
-import BluetoothSearchResultsScreen from "./src/modules/bluetoothSetup/bluetoothSearchResults/BluetoothSearchResultsScreen";
-import BluetoothConnectionAttemptScreen from "./src/modules/bluetoothSetup/bluetoothConnectionAttempt/BluetoothConnectionAttemptScreen";
+import BluetoothScanInitScreen from "./src/modules/setup/bluetoothSetup/bluetoothScanInit/BluetoothScanInitScreen";
+import BluetoothScanResultsScreen from "./src/modules/setup/bluetoothSetup/bluetoothScanResults/BluetoothScanResultsScreen";
+import BluetoothConnectionAttemptScreen from "./src/modules/setup/bluetoothSetup/bluetoothConnectionAttempt/BluetoothConnectionAttemptScreen";
 import ControllerScreen from "./src/modules/controller/ControllerScreen";
 import SettingsScreen from "./src/modules/settings/SettingsScreen";
 import { ToastProvider } from "react-native-toast-notifications";
-import SelectConnectionMethodScreen from "./src/modules/selectConnectionMethod/SelectConnectionMethodScreen";
+import SelectConnectionMethodScreen from "./src/modules/setup/connectionMethodSetup/SelectConnectionMethodScreen";
 import { ScreenNamesEnum } from "./src/models/enums/ScreenNamesEnum";
-import DetectorsQuantitySetupScreen from "./src/modules/detectorsSetup/detectorsQuantitySetup/DetectorsQuantitySetupScreen";
-import DetectorsLocationSetupScreen from "./src/modules/detectorsSetup/detectorsLocationSetup/DetectorsLocationSetupScreen";
+import DetectorsQuantitySetupScreen from "./src/modules/setup/detectorsSetup/detectorsQuantitySetup/DetectorsQuantitySetupScreen";
+import DetectorsLocationSetupScreen from "./src/modules/setup/detectorsSetup/detectorsLocationSetup/DetectorsLocationSetupScreen";
 import MeasurementScreen from "./src/modules/measurement/MeasurementScreen";
 import GlobalErrorHandler from "./src/modules/errorHandler/GlobalErrorHandler";
 import InitialLoadingScreen from "./src/modules/loading/InitialLoadingScreen";
-import DetectorsSocketSetupScreen from "./src/modules/detectorsSetup/detectorsSocketSetup/DetectorsSocketSetupScreen";
+import DetectorsSocketSetupScreen from "./src/modules/setup/detectorsSetup/detectorsSocketSetup/DetectorsSocketSetupScreen";
 import { enableScreens } from "react-native-screens";
+import DetectorsSetupScreen from "./src/modules/setup/detectorsSetup/DetectorsSetupScreen";
 
 const NavigationStack = createNativeStackNavigator();
 
@@ -49,16 +50,20 @@ const App = () => {
               component={SelectConnectionMethodScreen}
             />
             <NavigationStack.Screen
-              name={ScreenNamesEnum.BLUETOOTH_SEARCH_INIT}
-              component={BluetoothSearchInitScreen}
+              name={ScreenNamesEnum.BLUETOOTH_SCAN_INIT}
+              component={BluetoothScanInitScreen}
             />
             <NavigationStack.Screen
-              name={ScreenNamesEnum.BLUETOOTH_SEARCH_RESULTS}
-              component={BluetoothSearchResultsScreen}
+              name={ScreenNamesEnum.BLUETOOTH_SCAN_RESULTS}
+              component={BluetoothScanResultsScreen}
             />
             <NavigationStack.Screen
               name={ScreenNamesEnum.BLUETOOTH_CONNECTION_ATTEMPT}
               component={BluetoothConnectionAttemptScreen}
+            />
+            <NavigationStack.Screen
+              name={ScreenNamesEnum.DETECTORS_SETUP}
+              component={DetectorsSetupScreen}
             />
             <NavigationStack.Screen
               name={ScreenNamesEnum.DETECTORS_QUANTITY_SETUP}

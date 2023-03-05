@@ -1,7 +1,8 @@
 interface ButtonData {
-  backgroundColor: string;
+  backgroundColor?: string;
   title: string;
   action: any;
+  disabled?: boolean;
 }
 
 export default ButtonData;

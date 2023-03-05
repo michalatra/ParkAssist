@@ -18,12 +18,12 @@ const sections: SettingsSectionData[] = [
       {
         icon: SettingsTileIconEnum.SCAN_BLUETOOTH,
         title: "Scan bluetooth devices",
-        path: ScreenNamesEnum.BLUETOOTH_SEARCH_INIT,
+        path: ScreenNamesEnum.BLUETOOTH_SCAN_INIT,
       },
       {
         icon: SettingsTileIconEnum.WIRED_DETECTORS,
         title: "Setup wired detectors",
-        path: ScreenNamesEnum.DETECTORS_QUANTITY_SETUP,
+        path: ScreenNamesEnum.DETECTORS_SETUP,
       },
     ],
   },
@@ -35,9 +35,10 @@ const SettingsScreen = ({ navigation }: any) => {
   };
 
   const handleClearCache = () => {
-    AsyncStorage.clear().then(() =>
-      toast.show("Cache cleared", { type: "success" })
-    );
+    AsyncStorage.clear().then(() => {
+      toast.show("Cache cleared", { type: "success" });
+      navigation.navigate(ScreenNamesEnum.INITIAL);
+    });
   };
 
   return (

@@ -1,5 +1,5 @@
 export enum ColorsEnum {
-  WHITE = "#DDDDDD",
+  WHITE = "#FFFFFF",
   BLACK = "#000000",
   LIGHT_GRAY = "#A5A5A5",
   BACKGROUND_DARK = "#121212",
