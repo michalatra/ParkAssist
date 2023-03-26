@@ -17,11 +17,53 @@ export const styles = StyleSheet.create({
     paddingBottom: 20,
   },
 
-  centeredContainer: {
+  initContainer: {
+    backgroundColor: ColorsEnum.BACKGROUND_DARK,
     display: "flex",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    width: "100%",
+    flex: 1,
+  },
+
+  layoutContainer: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    width: "100%",
+    flex: 1,
+  },
+
+  contentContainer: {
+    display: "flex",
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
+    width: "100%",
     flex: 1,
+  },
+
+  contentContainerCenteredHorizontally: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    width: "100%",
+    flex: 1,
+  },
+
+  contentImage: {
+    width: "70%",
+    resizeMode: "contain",
+  },
+
+  centeredContainer: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    width: "100%",
   },
 
   hidden: {
@@ -34,46 +76,212 @@ export const styles = StyleSheet.create({
 
   logoContainer: {
     marginTop: 0.2 * windowHeight,
+    paddingHorizontal: 20,
     display: "flex",
     justifyContent: "flex-start",
-    alignItems: "center",
+    alignItems: "flex-start",
     width: "100%",
-    height: "70%",
     flex: 1,
   },
 
-  logo: {
-    height: "30%",
+  title: {
+    fontSize: 60,
+    fontWeight: "bold",
+    color: ColorsEnum.WHITE,
+    marginBottom: 10,
+  },
+
+  slogan: {
+    fontSize: 20,
+    color: ColorsEnum.LIGHT_GRAY,
+  },
+
+  wavesContainer: {
+    position: "absolute",
+    width: windowWidth,
+    height: windowHeight,
+  },
+
+  waves: {
+    position: "absolute",
+    top: windowHeight * 0.8 - 320,
+  },
+
+  wavesFooter: {
+    position: "absolute",
+    height: windowHeight * 0.2,
+    width: windowWidth,
+    top: windowHeight * 0.8,
+  },
+
+  buttonContainer: {
+    display: "flex",
+    height: 120,
+    width: windowWidth,
+    padding: 30,
+    marginBottom: 30,
+    alignItems: "stretch",
+    justifyContent: "center",
+  },
+
+  button: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: ColorsEnum.WHITE,
+    borderRadius: 20,
+    padding: 15,
+    flex: 1,
+    elevation: 5,
+  },
+
+  buttonDisabled: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderRadius: 20,
+    borderColor: ColorsEnum.WHITE,
+    borderWidth: 2,
+    padding: 15,
+    flex: 1,
+  },
+
+  buttonText: {
+    color: ColorsEnum.BLACK,
+    fontWeight: "bold",
+    fontSize: 20,
+  },
+
+  buttonTextDisabled: {
+    color: ColorsEnum.WHITE,
+    fontWeight: "bold",
+    fontSize: 20,
+  },
+
+  buttonIcon: {
+    width: 20,
     resizeMode: "contain",
   },
 
-  title: {
-    marginTop: 30,
-    fontSize: 48,
-    fontWeight: "bold",
-    color: ColorsEnum.WHITE,
+  buttonIconDisabled: {
+    width: 20,
+    tintColor: ColorsEnum.WHITE,
+    resizeMode: "contain",
+  },
+
+  connectionMethodsContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    flex: 0.8,
   },
 
   connectionMethodContainer: {
-    width: windowWidth * 0.9,
+    position: "relative",
     display: "flex",
+    flexDirection: "column",
+    flex: 1,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
     borderRadius: 20,
     margin: 10,
-    elevation: 20,
+    elevation: 10,
+    backgroundColor: ColorsEnum.BACKGROUND_LIGHT,
+    padding: 20,
   },
 
-  connectionMethodContainerGreen: {
-    backgroundColor: ColorsEnum.GREEN_LIGHT,
-  },
-
-  connectionMethodContainerBlue: {
-    backgroundColor: ColorsEnum.BLUE_LIGHT,
+  connectionMethodContainerActive: {
+    position: "relative",
+    display: "flex",
+    flexDirection: "column",
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderRadius: 20,
+    margin: 10,
+    elevation: 10,
+    backgroundColor: ColorsEnum.WHITE,
+    padding: 20,
   },
 
   connectionMethodIcon: {
-    height: "40%",
+    height: 80,
+    resizeMode: "contain",
+    marginBottom: 20,
+  },
+
+  connectionMethodIconActive: {
+    height: 80,
+    resizeMode: "contain",
+    tintColor: ColorsEnum.BACKGROUND_LIGHT,
+    marginBottom: 20,
+  },
+
+  connectionMethodText: {
+    fontSize: 24,
+    color: ColorsEnum.WHITE,
+    fontWeight: "bold",
+  },
+
+  connectionMethodTextActive: {
+    fontSize: 24,
+    color: ColorsEnum.BACKGROUND_LIGHT,
+    fontWeight: "bold",
+  },
+
+  navContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 20,
+    width: windowWidth,
+  },
+
+  navLogoContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    backgroundColor: ColorsEnum.BACKGROUND_LIGHT,
+    padding: 10,
+    borderRadius: 10,
+  },
+
+  navLogo: {
+    fontSize: 14,
+    color: ColorsEnum.WHITE,
+    fontWeight: "bold",
+  },
+
+  navActionsContainer: {
+    display: "flex",
+    flexDirection: "row",
+  },
+
+  navActionContainer: {
+    borderRadius: 10,
+    backgroundColor: ColorsEnum.BACKGROUND_LIGHT,
+    padding: 10,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  navActionContainerLeft: {
+    marginRight: 10,
+  },
+
+  navActionContainerRight: {
+    marginLeft: 10,
+  },
+
+  navIcon: {
+    width: 20,
+    height: 20,
     resizeMode: "contain",
   },
 
@@ -182,15 +390,11 @@ export const styles = StyleSheet.create({
   },
 
   instructionContainer: {
-    marginVertical: 10,
     display: "flex",
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "flex-start",
     width: "100%",
-    backgroundColor: ColorsEnum.BACKGROUND_LIGHT,
-    borderRadius: 20,
-    elevation: 10,
-    paddingVertical: 10,
+    padding: 20,
   },
 
   instructionContainerStandalone: {
@@ -206,11 +410,15 @@ export const styles = StyleSheet.create({
   },
 
   instructionText: {
-    textAlign: "center",
-    width: "90%",
     color: ColorsEnum.WHITE,
     fontWeight: "bold",
-    fontSize: instructionFontSize,
+    fontSize: 46,
+    marginBottom: 20,
+  },
+
+  subInstructionText: {
+    fontSize: 20,
+    color: ColorsEnum.LIGHT_GRAY,
   },
 
   bluetoothDeviceList: {
@@ -219,8 +427,9 @@ export const styles = StyleSheet.create({
 
   bluetoothDeviceListContent: {
     flex: 1,
-    alignItems: "center",
+    alignItems: "stretch",
     width: "100%",
+    paddingHorizontal: 20,
   },
 
   bluetoothDeviceListContentRefresh: {
@@ -283,15 +492,27 @@ export const styles = StyleSheet.create({
   },
 
   deviceTile: {
-    width: windowWidth * 0.95,
     backgroundColor: ColorsEnum.BACKGROUND_MEDIUM,
     padding: 15,
-    marginVertical: 5,
+    marginVertical: 8,
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     alignItems: "center",
-    borderRadius: 20,
+    borderRadius: 15,
+    flex: 1,
+    elevation: 20,
+  },
+
+  deviceTileActive: {
+    backgroundColor: ColorsEnum.WHITE,
+    padding: 15,
+    marginVertical: 8,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    borderRadius: 15,
     flex: 1,
     elevation: 20,
   },
@@ -302,11 +523,83 @@ export const styles = StyleSheet.create({
     resizeMode: "contain",
   },
 
+  deviceTileIconActive: {
+    width: 20,
+    height: 20,
+    tintColor: ColorsEnum.BACKGROUND_MEDIUM,
+    resizeMode: "contain",
+  },
+
   deviceTileName: {
-    fontSize: 16,
+    marginLeft: 20,
+    fontSize: 20,
     fontWeight: "bold",
     textAlign: "left",
     color: ColorsEnum.WHITE,
+  },
+
+  deviceTileNameActive: {
+    marginLeft: 20,
+    fontSize: 20,
+    fontWeight: "bold",
+    textAlign: "left",
+    color: ColorsEnum.BACKGROUND_MEDIUM,
+  },
+
+  detectorGroup: {
+    width: "100%",
+  },
+
+  detectorGroupTile: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    backgroundColor: ColorsEnum.BACKGROUND_MEDIUM,
+    borderRadius: 20,
+    padding: 20,
+    width: "90%",
+    elevation: 5,
+    marginVertical: 10,
+  },
+
+  detectorGroupTileIcon: {
+    width: 60,
+    height: 60,
+    resizeMode: "contain",
+  },
+
+  detectorGroupTileContent: {
+    display: "flex",
+    flexDirection: "column",
+    flex: 1,
+    justifyContent: "flex-start",
+    alignItems: "center",
+    paddingHorizontal: 10,
+  },
+
+  detectorGroupTileContentHeader: {
+    padding: 10,
+    backgroundColor: ColorsEnum.BACKGROUND_LIGHT,
+    borderRadius: 10,
+  },
+
+  detectorGroupTileContentHeaderText: {
+    color: ColorsEnum.WHITE,
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+
+  detectorGroupTileContentText: {
+    color: ColorsEnum.LIGHT_GRAY,
+    fontSize: 16,
+    marginTop: 10,
+  },
+
+  detectorGroupTileArrow: {
+    width: 30,
+    tintColor: ColorsEnum.WHITE,
+    resizeMode: "contain",
   },
 
   detectorsQuantityContainer: {

@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Text, TextInput, View } from "react-native";
-import { styles } from "../../../styles/styles";
-import Navigation from "../../common/Navigation";
-import { ScreenNamesEnum } from "../../../models/enums/ScreenNamesEnum";
-import Button from "../../common/Button";
-import { ColorsEnum } from "../../../models/enums/ColorsEnum";
+import { styles } from "../../../../styles/styles";
+import Navigation from "../../../common/Navigation";
+import { ScreenNamesEnum } from "../../../../models/enums/ScreenNamesEnum";
+import Button from "../../../common/Button";
+import { ColorsEnum } from "../../../../models/enums/ColorsEnum";
 import { useToast } from "react-native-toast-notifications";
-import { GlobalVariablesEnum } from "../../../models/enums/GlobalVariablesEnum";
+import { GlobalVariablesEnum } from "../../../../models/enums/GlobalVariablesEnum";
 
 const DetectorsQuantitySetupScreen = ({ navigation, route }: any) => {
   const returnScreen: string = !!route.params?.returnScreen

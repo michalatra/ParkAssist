@@ -1,5 +1,4 @@
-import { Image, Text, TouchableOpacity, View } from "react-native";
-import Navigation from "../common/Navigation";
+import { Text, View } from "react-native";
 import { styles } from "../../styles/styles";
 import { ScreenNamesEnum } from "../../models/enums/ScreenNamesEnum";
 import { useEffect, useState } from "react";
@@ -32,8 +31,14 @@ import DeviceInfo from "./components/DeviceInfo";
 import { ConnectionStatus } from "../../models/enums/ConnectionStatus";
 import { DetectorData } from "../../models/DetectorData";
 import { useToast } from "react-native-toast-notifications";
+import NavBar from "../common/NavBar";
+import WavyBackground from "../common/WavyBackground";
+import { ColorsEnum } from "../../models/enums/ColorsEnum";
+import ActionButton from "../common/ActionButton";
+import useLanguage from "../../language/LanguageHook";
 
 const ControllerScreen = ({ navigation }: any) => {
+  const LANGUAGE = useLanguage();
   const [bluetoothDevice, setBluetoothDevice] =
     useState<BluetoothDeviceData | null>(null);
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>(
@@ -96,7 +101,6 @@ const ControllerScreen = ({ navigation }: any) => {
 
     return () => {
       subscription.unsubscribe();
-      console.log("Unsub Disconnected");
     };
   }, []);
 
@@ -108,7 +112,6 @@ const ControllerScreen = ({ navigation }: any) => {
 
     return () => {
       subscription.unsubscribe();
-      console.log("Unsub error");
     };
   }, []);
 
@@ -140,7 +143,6 @@ const ControllerScreen = ({ navigation }: any) => {
   };
 
   const handleMeasure = () => {
-    console.log(bluetoothDevice);
     if (bluetoothDevice && connectionStatus === ConnectionStatus.CONNECTED) {
       navigation.navigate(ScreenNamesEnum.MEASUREMENT);
     } else {
@@ -174,38 +176,30 @@ const ControllerScreen = ({ navigation }: any) => {
   const handleFindNewDevice = () => {};
 
   return (
-    <View style={styles.container}>
-      <Navigation
-        navigation={navigation}
-        title="Park Assist"
-        showSettings={true}
-      />
-      <View style={styles.actionContainer}>
-        <View style={styles.circleContainer}>
-          <View style={styles.instructionContainer}>
-            <Text style={styles.instructionText}>
-              Tap to start the measurement{" "}
-            </Text>
-          </View>
-          <TouchableOpacity onPress={handleMeasure}>
-            <View style={[styles.outerCircle, styles.outerCircleYellow]}>
-              <View style={[styles.innerCircle, styles.innerCircleYellow]}>
-                <Image
-                  style={styles.circleIcon}
-                  source={require("../../assets/icons/ruler.png")}
-                />
-              </View>
-            </View>
-          </TouchableOpacity>
+    <View style={styles.initContainer}>
+      <WavyBackground color={ColorsEnum.YELLOW_DARK} />
+      <NavBar navigation={navigation} showSettings={true} showHelp={true} />
+      <View style={styles.layoutContainer}>
+        <View style={styles.instructionContainer}>
+          <Text style={styles.instructionText}>
+            {LANGUAGE ? LANGUAGE.CONTROLLER.INSTRUCTION : ""}
+          </Text>
         </View>
+        <DeviceInfo
+          device={bluetoothDevice}
+          loading={loading}
+          connectionStatus={connectionStatus}
+          onFindNewDevice={handleFindNewDevice}
+          onConnect={handleConnect}
+        />
+        <ActionButton
+          title={LANGUAGE ? LANGUAGE.CONTROLLER.BEGIN_PARKING : ""}
+          action={handleMeasure}
+          disabled={
+            !bluetoothDevice || connectionStatus !== ConnectionStatus.CONNECTED
+          }
+        />
       </View>
-      <DeviceInfo
-        device={bluetoothDevice}
-        loading={loading}
-        connectionStatus={connectionStatus}
-        onFindNewDevice={handleFindNewDevice}
-        onConnect={handleConnect}
-      />
     </View>
   );
 };

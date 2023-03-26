@@ -1,22 +1,21 @@
 import React, { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { styles } from "../../../styles/styles";
-import Navigation from "../../common/Navigation";
-import { ColorsEnum } from "../../../models/enums/ColorsEnum";
-import Button from "../../common/Button";
-import { DetectorLocationTypeEnum } from "../../../models/enums/DetectorLocationTypeEnum";
-import { DetectorLocationData } from "../../../models/DetectorLocationData";
+import { styles } from "../../../../styles/styles";
+import Navigation from "../../../common/Navigation";
+import { ColorsEnum } from "../../../../models/enums/ColorsEnum";
+import Button from "../../../common/Button";
+import { DetectorLocationTypeEnum } from "../../../../models/enums/DetectorLocationTypeEnum";
+import { DetectorLocationData } from "../../../../models/DetectorLocationData";
 import { useToast } from "react-native-toast-notifications";
-import { ScreenNamesEnum } from "../../../models/enums/ScreenNamesEnum";
+import { ScreenNamesEnum } from "../../../../models/enums/ScreenNamesEnum";
 import {
   getDetectorLocations,
   setDetectorsCount,
   setDetectorsLocations,
-} from "../../../services/DetectorsService";
-import { saveValue } from "../../../services/StorageService";
+} from "../../../../services/DetectorsService";
+import { saveValue } from "../../../../services/StorageService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { StorageKeysEnum } from "../../../models/enums/StorageKeysEnum";
-import { DetectorLocationStorageData } from "../../../models/DetectorLocationStorageData";
+import { StorageKeysEnum } from "../../../../models/enums/StorageKeysEnum";
 
 const DetectorsLocationSetupScreen = ({ navigation, route }: any) => {
   const returnScreen: string = !!route.params?.returnScreen
@@ -99,7 +98,7 @@ const DetectorsLocationSetupScreen = ({ navigation, route }: any) => {
         </View>
         <Image
           style={styles.detectorsLocationCarImage}
-          source={require("../../../assets/icons/top_shot.png")}
+          source={require("../../../../assets/icons/top_shot.png")}
         />
         <View style={styles.detectorsLocationRowContainer}>
           {locations
