@@ -5,7 +5,7 @@ export const saveValue = (
   storage: AsyncStorageStatic,
   key: string,
   value: any
-) => {
+): Observable<any> => {
   const jsonValue = JSON.stringify(value);
   return from(storage.setItem(key, jsonValue).then((_) => true));
 };

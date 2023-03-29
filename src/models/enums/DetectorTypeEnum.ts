@@ -1,5 +1,5 @@
 export enum DetectorTypeEnum {
-  ULTRASONIC = "ultrasonic",
-  INFRARED = "infrared",
-  LIDAR = "lidar",
+  ULTRA_SONIC = "ULTRA_SONIC",
+  INFRARED = "INFRARED",
+  LIDAR = "LIDAR",
 }

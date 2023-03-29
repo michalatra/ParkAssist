@@ -44,11 +44,46 @@ export type LanguageType = {
       LIDAR: string;
     };
     DETECTOR_COUNT: string;
+    ADD_NEW_DETECTOR: string;
+    EDIT_DETECTOR: string;
+    ADD: string;
+    SET_NAME: string;
+    SELECT_DETECTOR_TYPE: string;
+    SELECT_LOCATION_TYPE: string;
+    SELECT_LOCATION: string;
+    SELECT_SOCKET: string;
+    LOCATION_TYPE: {
+      FRONT: string;
+      BACK: string;
+    };
+    LOCATION: {
+      LEFT: string;
+      RIGHT: string;
+      CENTER_LEFT: string;
+      CENTER_RIGHT: string;
+    };
+    DETECTORS: {
+      ULTRA_SONIC: string;
+      INFRARED: string;
+      LIDAR: string;
+    };
   };
 
   CONTROLLER: {
     INSTRUCTION: string;
     BEGIN_PARKING: string;
+  };
+
+  SETTINGS: {
+    INSTRUCTION: string;
+    GENERAL: string;
+    SETUP_DETECTORS: string;
+    SETUP_BLUETOOTH_CONNECTION: string;
+    RESET_APPLICATION: string;
+  };
+
+  MEASUREMENT: {
+    STOP_MEASUREMENT: string;
   };
 };
 

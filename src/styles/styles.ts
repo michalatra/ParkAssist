@@ -53,6 +53,13 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
 
+  fullScreenScrollView: {
+    display: "flex",
+    flex: 1,
+    width: "100%",
+    padding: 10,
+  },
+
   contentImage: {
     width: "70%",
     resizeMode: "contain",
@@ -443,15 +450,24 @@ export const styles = StyleSheet.create({
     width: "90%",
     display: "flex",
     justifyContent: "flex-start",
+    alignItems: "flex-start",
+    elevation: 5,
+  },
+
+  deviceInfoTitleContainer: {
+    backgroundColor: ColorsEnum.BACKGROUND_LIGHT,
+    borderRadius: 10,
+    padding: 10,
+    display: "flex",
+    justifyContent: "center",
     alignItems: "center",
-    elevation: 20,
+    marginBottom: 10,
   },
 
   deviceInfoTitle: {
     color: ColorsEnum.WHITE,
     fontWeight: "bold",
-    fontSize: 16,
-    marginBottom: 10,
+    fontSize: 18,
   },
 
   deviceInfoItemsContainer: {
@@ -600,6 +616,186 @@ export const styles = StyleSheet.create({
     width: 30,
     tintColor: ColorsEnum.WHITE,
     resizeMode: "contain",
+  },
+
+  detectorListItem: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: ColorsEnum.BACKGROUND_MEDIUM,
+    borderRadius: 10,
+    padding: 20,
+    width: "90%",
+    elevation: 5,
+    marginVertical: 10,
+  },
+
+  detectorListItemContent: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+
+  detectorListItemIcon: {
+    width: 40,
+    height: 40,
+    resizeMode: "contain",
+  },
+
+  detectorListItemText: {
+    color: ColorsEnum.WHITE,
+    fontSize: 18,
+    marginLeft: 20,
+    fontWeight: "bold",
+  },
+
+  detectorListItemActions: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
+
+  detectorListItemAction: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: ColorsEnum.BACKGROUND_LIGHT,
+    borderRadius: 10,
+    padding: 10,
+    marginLeft: 10,
+  },
+
+  detectorListItemActionIcon: {
+    width: 20,
+    height: 20,
+    resizeMode: "contain",
+  },
+
+  detectorAddSection: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    width: "100%",
+    padding: 10,
+    borderRadius: 20,
+    backgroundColor: ColorsEnum.BACKGROUND_MEDIUM,
+    marginVertical: 10,
+    elevation: 5,
+  },
+
+  detectorAddSectionTitleContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 10,
+    backgroundColor: ColorsEnum.BACKGROUND_LIGHT,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+
+  detectorAddSectionTitle: {
+    color: ColorsEnum.WHITE,
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+
+  detectorAddSectionInput: {
+    display: "flex",
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  detectorAddSectionInputText: {
+    backgroundColor: ColorsEnum.BACKGROUND_LIGHT,
+    width: "100%",
+    borderRadius: 10,
+    padding: 10,
+    marginVertical: 10,
+    color: ColorsEnum.WHITE,
+    fontSize: 18,
+    elevation: 5,
+  },
+
+  detectorAddSectionOptions: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "center",
+    width: "100%",
+    flexWrap: "wrap",
+    marginVertical: 10,
+  },
+
+  detectorAddSectionOption: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: ColorsEnum.BACKGROUND_LIGHT,
+    borderRadius: 10,
+    padding: 15,
+    marginVertical: 10,
+    elevation: 5,
+  },
+
+  detectorAddSectionOptionActive: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: ColorsEnum.WHITE,
+    borderRadius: 10,
+    padding: 15,
+    marginVertical: 10,
+    elevation: 5,
+  },
+
+  detectorAddSectionExpandedOption: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    backgroundColor: ColorsEnum.BACKGROUND_LIGHT,
+    borderRadius: 10,
+    padding: 15,
+    marginVertical: 10,
+    elevation: 5,
+  },
+
+  detectorAddSectionExpandedOptionActive: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    backgroundColor: ColorsEnum.WHITE,
+    borderRadius: 10,
+    padding: 15,
+    marginVertical: 10,
+    elevation: 5,
+  },
+
+  detectorAddSectionExpandedOptionIcon: {
+    width: 50,
+    height: 50,
+    resizeMode: "contain",
+    marginBottom: 10,
+  },
+
+  detectorAddSectionOptionText: {
+    color: ColorsEnum.WHITE,
+    fontSize: 16,
+  },
+
+  detectorAddSectionOptionTextActive: {
+    color: ColorsEnum.BLACK,
+    fontSize: 16,
+    fontWeight: "bold",
   },
 
   detectorsQuantityContainer: {
@@ -828,35 +1024,41 @@ export const styles = StyleSheet.create({
     width: "100%",
   },
 
+  settingsSectionTitleContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
   settingsSectionTitle: {
     color: ColorsEnum.WHITE,
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
   },
 
   settingsSectionTile: {
     backgroundColor: ColorsEnum.BACKGROUND_LIGHT,
-    padding: 10,
+    padding: 15,
     marginVertical: 3,
     borderRadius: 10,
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    elevation: 20,
+    elevation: 5,
   },
 
   settingsSectionTileText: {
     color: ColorsEnum.WHITE,
-    opacity: 0.8,
-    fontSize: 12,
+    fontSize: 16,
   },
 
   settingsSectionTileIcon: {
-    opacity: 0.8,
-    width: 15,
-    height: 15,
+    width: 20,
+    height: 20,
     resizeMode: "contain",
+    tintColor: ColorsEnum.WHITE,
   },
 });

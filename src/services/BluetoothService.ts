@@ -3,19 +3,22 @@ import { encode, decode } from "base-64";
 import { BleManager, Characteristic, Device } from "react-native-ble-plx";
 import {
   BehaviorSubject,
+  delay,
   filter,
   finalize,
   from,
   interval,
   Subject,
+  switchMap,
   take,
   takeUntil,
   tap,
 } from "rxjs";
-import {PermissionsAndroid, Platform} from "react-native";
+import { PermissionsAndroid, Platform } from "react-native";
 import { DetectorData } from "../models/DetectorData";
 import { BluetoothMessagesEnum } from "../models/enums/BluetoothMessagesEnum";
 import { BluetoothErrorEnum } from "../models/enums/BluetoothErrorEnum";
+import { DetectorTypeEnum } from "../models/enums/DetectorTypeEnum";
 
 export const bluetoothManager = new BleManager();
 
@@ -99,10 +102,14 @@ export const scanBluetoothDevices = (duration: number) => {
 export const requestLocationPermission = () => {
   if (Platform.OS === "android" && Platform.Version >= 23) {
     // Scanning: Checking permissions...
-    const enabled = PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+    const enabled = PermissionsAndroid.check(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+    );
     if (!enabled) {
       // Scanning: Permissions disabled, showing...
-      const granted = PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+      const granted = PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+      );
       if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
         // Scanning: Permissions not granted, aborting...
         return;
@@ -187,12 +194,40 @@ const connectDevice = (device: Device) => {
     .catch((_) => bluetoothError.next(BluetoothErrorEnum.CONNECTING_ERROR));
 };
 
-export const setupWiredDetectors = (detectors: DetectorData[]) => {
-  let message = BluetoothMessagesEnum.SET_WIRED.toString();
-  detectors.forEach(
-    (detector) =>
-      (message += (parseInt(detector.socketIndex) - 1).toString() + ",")
+export const disconnectBluetoothDevice = () => {
+  return from(
+    connectedDevice
+      .getValue()!
+      .cancelConnection()
+      .then(() => {
+        connectedDevice.next(null);
+        connectedDeviceCharacteristic.next(null);
+        deviceHasDisconnected.next(true);
+      })
   );
+};
+
+export const setupWiredDetectors = (detectors: DetectorData[]) => {
+  const ultrasonicDetectors = detectors.filter(
+    (d) => d.type === DetectorTypeEnum.ULTRA_SONIC
+  );
+  const infraredDetectors = detectors.filter(
+    (d) => d.type === DetectorTypeEnum.INFRARED
+  );
+  const lidarDetectors = detectors.filter(
+    (d) => d.type === DetectorTypeEnum.LIDAR
+  );
+
+  let message = BluetoothMessagesEnum.SET_ULTRASONIC.toString();
+
+  if (ultrasonicDetectors.length) {
+    message += "T:";
+    ultrasonicDetectors.forEach(
+      (detector) => (message += (detector.socketIndex - 1).toString() + ",")
+    );
+  } else {
+    message += "F";
+  }
 
   console.log("Writing: ", message);
 
@@ -202,6 +237,28 @@ export const setupWiredDetectors = (detectors: DetectorData[]) => {
           .getValue()!
           .writeWithoutResponse(encode(message))
           .catch((_) => bluetoothError.next(BluetoothErrorEnum.WRITING_ERROR))
+          .then((_) => {
+            let lidarMessage = BluetoothMessagesEnum.SET_LIDAR.toString();
+
+            if (lidarDetectors.length) {
+              lidarMessage += "T";
+            } else {
+              lidarMessage += "F";
+            }
+
+            console.log("Writing LIdar: ", lidarMessage);
+
+            return from(
+              connectedDeviceCharacteristic.getValue()
+                ? connectedDeviceCharacteristic
+                    .getValue()!
+                    .writeWithoutResponse(encode(lidarMessage))
+                    .catch((_) =>
+                      bluetoothError.next(BluetoothErrorEnum.WRITING_ERROR)
+                    )
+                : Promise.reject()
+            );
+          })
       : Promise.reject()
   );
 };

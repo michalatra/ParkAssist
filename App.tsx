@@ -9,14 +9,13 @@ import SettingsScreen from "./src/modules/settings/SettingsScreen";
 import { ToastProvider } from "react-native-toast-notifications";
 import SelectConnectionMethodScreen from "./src/modules/setup/connectionMethodSetup/SelectConnectionMethodScreen";
 import { ScreenNamesEnum } from "./src/models/enums/ScreenNamesEnum";
-import DetectorsQuantitySetupScreen from "./src/modules/setup/detectorsSetup/detectorsQuantitySetup/DetectorsQuantitySetupScreen";
-import DetectorsLocationSetupScreen from "./src/modules/setup/detectorsSetup/detectorsLocationSetup/DetectorsLocationSetupScreen";
 import MeasurementScreen from "./src/modules/measurement/MeasurementScreen";
 import GlobalErrorHandler from "./src/modules/errorHandler/GlobalErrorHandler";
 import InitialLoadingScreen from "./src/modules/loading/InitialLoadingScreen";
-import DetectorsSocketSetupScreen from "./src/modules/setup/detectorsSetup/detectorsSocketSetup/DetectorsSocketSetupScreen";
 import { enableScreens } from "react-native-screens";
 import DetectorsSetupScreen from "./src/modules/setup/detectorsSetup/DetectorsSetupScreen";
+import DetectorsGroupDetailsScreen from "./src/modules/setup/detectorsSetup/components/detectorsGroupDetails/DetectorsGroupDetailsScreen";
+import AddEditDetectorScreen from "./src/modules/setup/detectorsSetup/components/addEditDetector/AddEditDetectorScreen";
 
 const NavigationStack = createNativeStackNavigator();
 
@@ -66,16 +65,12 @@ const App = () => {
               component={DetectorsSetupScreen}
             />
             <NavigationStack.Screen
-              name={ScreenNamesEnum.DETECTORS_QUANTITY_SETUP}
-              component={DetectorsQuantitySetupScreen}
+              name={ScreenNamesEnum.DETECTORS_GROUP_DETAILS}
+              component={DetectorsGroupDetailsScreen}
             />
             <NavigationStack.Screen
-              name={ScreenNamesEnum.DETECTORS_SOCKET_SETUP}
-              component={DetectorsSocketSetupScreen}
-            />
-            <NavigationStack.Screen
-              name={ScreenNamesEnum.DETECTORS_LOCATION_SETUP}
-              component={DetectorsLocationSetupScreen}
+              name={ScreenNamesEnum.ADD_EDIT_DETECTOR_SCREEN}
+              component={AddEditDetectorScreen}
             />
             <NavigationStack.Screen
               name={ScreenNamesEnum.CONTROLLER}

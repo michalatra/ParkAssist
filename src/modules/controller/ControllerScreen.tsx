@@ -23,6 +23,7 @@ import {
   connectDeviceById,
   connectedDevice$,
   deviceHasDisconnected$,
+  disconnectBluetoothDevice,
   scanBluetoothDevices,
   setupWiredDetectors,
 } from "../../services/BluetoothService";
@@ -36,6 +37,7 @@ import WavyBackground from "../common/WavyBackground";
 import { ColorsEnum } from "../../models/enums/ColorsEnum";
 import ActionButton from "../common/ActionButton";
 import useLanguage from "../../language/LanguageHook";
+import { getDetectors } from "../../services/DetectorsService";
 
 const ControllerScreen = ({ navigation }: any) => {
   const LANGUAGE = useLanguage();
@@ -123,7 +125,7 @@ const ControllerScreen = ({ navigation }: any) => {
       console.log("Handling connection result inside");
       setBluetoothDevice(device as BluetoothDeviceData);
       setConnectionStatus(ConnectionStatus.CONNECTED);
-      setupSockets();
+      setupSockets().pipe(first()).subscribe();
     } else {
       setConnectionStatus(ConnectionStatus.DISCONNECTED);
     }
@@ -131,23 +133,29 @@ const ControllerScreen = ({ navigation }: any) => {
 
   const setupSockets = () => {
     console.log("Setting up sockets");
-    readValue(AsyncStorage, StorageKeysEnum.WIRED_DETECTORS)
-      .pipe(
-        first(),
-        tap((detectors) => console.log("Wired detectors", detectors)),
-        filter(Boolean),
-        map((detectors) => setupWiredDetectors(detectors as DetectorData[])),
-        tap((_) => setSocketsInitialized(true))
-      )
-      .subscribe(() => setLoading(false));
+    return getDetectors(AsyncStorage).pipe(
+      first(),
+      tap((detectors) => console.log("Wired detectors", detectors)),
+      filter(Boolean),
+      map((detectors) => setupWiredDetectors(detectors as DetectorData[])),
+      tap((_) => setSocketsInitialized(true)),
+      tap((_) => setLoading(false))
+    );
   };
 
   const handleMeasure = () => {
-    if (bluetoothDevice && connectionStatus === ConnectionStatus.CONNECTED) {
-      navigation.navigate(ScreenNamesEnum.MEASUREMENT);
-    } else {
-      toast.show("Please connect to device first", { type: "danger" });
-    }
+    setupSockets()
+      .pipe(first())
+      .subscribe((_) => {
+        if (
+          bluetoothDevice &&
+          connectionStatus === ConnectionStatus.CONNECTED
+        ) {
+          navigation.navigate(ScreenNamesEnum.MEASUREMENT);
+        } else {
+          toast.show("Please connect to device first", { type: "danger" });
+        }
+      });
   };
 
   const handleConnect = () => {
@@ -173,6 +181,12 @@ const ControllerScreen = ({ navigation }: any) => {
       .subscribe(handleConnectionResult);
   };
 
+  const handleDisconnect = () => {
+    disconnectBluetoothDevice().subscribe((_) => {
+      setConnectionStatus(ConnectionStatus.DISCONNECTED);
+    });
+  };
+
   const handleFindNewDevice = () => {};
 
   return (
@@ -191,6 +205,7 @@ const ControllerScreen = ({ navigation }: any) => {
           connectionStatus={connectionStatus}
           onFindNewDevice={handleFindNewDevice}
           onConnect={handleConnect}
+          onDisconnect={handleDisconnect}
         />
         <ActionButton
           title={LANGUAGE ? LANGUAGE.CONTROLLER.BEGIN_PARKING : ""}

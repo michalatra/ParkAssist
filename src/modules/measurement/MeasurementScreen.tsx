@@ -16,14 +16,18 @@ import { readValue } from "../../services/StorageService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StorageKeysEnum } from "../../models/enums/StorageKeysEnum";
 import { switchMap, tap } from "rxjs";
-import { DetectorLocationStorageData } from "../../models/DetectorLocationStorageData";
 import { DetectorLocationData } from "../../models/DetectorLocationData";
+import NavBar from "../common/NavBar";
+import WavyBackground from "../common/WavyBackground";
+import ActionButton from "../common/ActionButton";
+import useLanguage from "../../language/LanguageHook";
 
 const MeasurementScreen = ({ navigation }: any) => {
   const [measurement, setMeasurement] = useState<String>("");
   const [detectorLocations, setDetectorLocations] = useState<
     DetectorLocationData[]
   >([]);
+  const LANGUAGE = useLanguage();
   const toast = useToast();
   const onStop = () => {
     navigation.reset({
@@ -38,14 +42,14 @@ const MeasurementScreen = ({ navigation }: any) => {
       StorageKeysEnum.WIRED_DETECTORS_LOCATIONS
     )
       .pipe(
-        tap((locations) => {
-          setDetectorLocations(locations);
-          locations.forEach((location: DetectorLocationData) => {
-            toast.show(
-              `Detector: ${location.index}, Location type: ${location.locationType}, Location: ${location.location} `
-            );
-          });
-        }),
+        // tap((locations) => {
+        //   setDetectorLocations(locations);
+        //   locations.forEach((location: DetectorLocationData) => {
+        //     toast.show(
+        //       `Detector: ${location.index}, Location type: ${location.locationType}, Location: ${location.location} `
+        //     );
+        //   });
+        // }),
         switchMap((_) => startMeasurement())
       )
       .subscribe((currentMeasurement) => setMeasurement(currentMeasurement));
@@ -92,11 +96,8 @@ const MeasurementScreen = ({ navigation }: any) => {
 
   return (
     <View style={styles.container}>
-      <Navigation
-        title="Park Assist"
-        navigation={navigation}
-        showSettings={false}
-      />
+      <WavyBackground color={ColorsEnum.CORAL} />
+      <NavBar navigation={navigation} showSettings={false} showHelp={false} />
       <View style={styles.measurementContainer}>
         <View style={styles.measurementRowContainer}></View>
         <Image
@@ -108,9 +109,8 @@ const MeasurementScreen = ({ navigation }: any) => {
           <Text style={styles.instructionText}>{measurement}</Text>
         </View>
       </View>
-      <Button
-        backgroundColor={ColorsEnum.CORAL}
-        title="Stop Measurement"
+      <ActionButton
+        title={LANGUAGE ? LANGUAGE.MEASUREMENT.STOP_MEASUREMENT : ""}
         action={onStop}
       />
     </View>

@@ -15,6 +15,7 @@ interface DeviceInfoProps {
   loading: boolean;
   connectionStatus: ConnectionStatus;
   onConnect: () => void;
+  onDisconnect: () => void;
   onFindNewDevice: () => void;
 }
 const DeviceInfo = ({
@@ -22,39 +23,51 @@ const DeviceInfo = ({
   loading,
   connectionStatus,
   onConnect,
+  onDisconnect,
   onFindNewDevice,
 }: DeviceInfoProps) => {
   return (
-    <View style={styles.deviceInfoContainer}>
-      <Text style={styles.deviceInfoTitle}>Detectors Status</Text>
-      {loading ? (
-        <ActivityIndicator />
-      ) : device ? (
-        <View style={styles.deviceInfoItemsContainer}>
-          <View style={styles.deviceInfoItem}>
-            <Image
-              style={styles.deviceInfoItemIcon}
-              source={require("../../../assets/icons/cpu.png")}
-            />
-            <Text style={styles.deviceInfoItemText}>{device.name}</Text>
-          </View>
-          <View style={styles.deviceInfoItem}>
-            <Image
-              style={styles.deviceInfoItemIcon}
-              source={require("../../../assets/icons/status.png")}
-            />
-            <Text style={styles.deviceInfoItemText}>{connectionStatus}</Text>
-            {connectionStatus === ConnectionStatus.DISCONNECTED ? (
-              <TouchableOpacity onPress={onConnect}>
+    <View style={styles.centeredContainer}>
+      <View style={styles.deviceInfoContainer}>
+        <View style={styles.deviceInfoTitleContainer}>
+          <Text style={styles.deviceInfoTitle}>Detectors Status</Text>
+        </View>
+        {loading ? (
+          <ActivityIndicator />
+        ) : device ? (
+          <View style={styles.deviceInfoItemsContainer}>
+            <View style={styles.deviceInfoItem}>
+              <Image
+                style={styles.deviceInfoItemIcon}
+                source={require("../../../assets/icons/cpu.png")}
+              />
+              <Text style={styles.deviceInfoItemText}>{device.name}</Text>
+            </View>
+            <View style={styles.deviceInfoItem}>
+              <Image
+                style={styles.deviceInfoItemIcon}
+                source={require("../../../assets/icons/status.png")}
+              />
+              <Text style={styles.deviceInfoItemText}>{connectionStatus}</Text>
+              {connectionStatus === ConnectionStatus.DISCONNECTED ||
+              connectionStatus === ConnectionStatus.CONNECTING ? (
+                <TouchableOpacity onPress={onConnect}>
+                  <Image
+                    source={require("../../../assets/icons/refresh.png")}
+                    style={styles.deviceInfoRefreshIcon}
+                  />
+                </TouchableOpacity>
+              ) : null}
+              <TouchableOpacity onPress={onDisconnect}>
                 <Image
-                  source={require("../../../assets/icons/refresh.png")}
+                  source={require("../../../assets/icons/trash.png")}
                   style={styles.deviceInfoRefreshIcon}
                 />
               </TouchableOpacity>
-            ) : null}
+            </View>
           </View>
-        </View>
-      ) : null}
+        ) : null}
+      </View>
     </View>
   );
 };

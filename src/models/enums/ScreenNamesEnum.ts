@@ -10,9 +10,8 @@ export enum ScreenNamesEnum {
   WIFI_SEARCH_RESULTS = "wiFiSearchResults",
   WIFI_CONNECTION_ATTEMPT = "wiFiConnectionAttemptScreen",
   DETECTORS_SETUP = "detectorsSetupScreen",
-  DETECTORS_QUANTITY_SETUP = "detectorsQuantitySetupScreen",
-  DETECTORS_SOCKET_SETUP = "detectorsSocketSetup",
-  DETECTORS_LOCATION_SETUP = "detectorsLocationSetupScreen",
+  DETECTORS_GROUP_DETAILS = "detectorsGroupDetailsScreen",
+  ADD_EDIT_DETECTOR_SCREEN = "addEditDetectorScreen",
   CONTROLLER = "controllerScreen",
   MEASUREMENT = "measurementScreen",
 }
