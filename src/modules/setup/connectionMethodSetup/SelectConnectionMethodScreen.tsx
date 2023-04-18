@@ -44,7 +44,12 @@ const SelectConnectionMethodScreen = ({ navigation }: any) => {
   return (
     <View style={styles.initContainer}>
       <WavyBackground color={ColorsEnum.PINK_DARK} />
-      <NavBar navigation={navigation} showSettings={false} showHelp={true} />
+      <NavBar
+        navigation={navigation}
+        showSettings={false}
+        showHelp={true}
+        showLanguage={false}
+      />
       <View style={styles.layoutContainer}>
         <View style={styles.instructionContainer}>
           <Text style={styles.instructionText}>

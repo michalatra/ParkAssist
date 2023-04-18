@@ -25,7 +25,12 @@ const InitialScreen = ({ navigation }: any) => {
   return (
     <View style={styles.initContainer}>
       <WavyBackground color={ColorsEnum.YELLOW_DARK} />
-      <NavBar navigation={navigation} showSettings={false} showHelp={true} />
+      <NavBar
+        navigation={navigation}
+        showSettings={false}
+        showHelp={true}
+        showLanguage={true}
+      />
       <View style={styles.logoContainer}>
         <Text style={styles.title}>
           {LANGUAGE ? LANGUAGE.INITIAL.APP_TITLE : ""}

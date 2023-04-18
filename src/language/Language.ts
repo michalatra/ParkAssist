@@ -162,6 +162,10 @@ const LANGUAGES: AppLanguageType = {
 const language = new BehaviorSubject<LanguageType>(LANGUAGES.PL);
 export const language$ = language.asObservable();
 
+const selectedLanguage = new BehaviorSubject<LanguageEnum>(LanguageEnum.PL);
+export const selectedLanguage$ = selectedLanguage.asObservable();
+
 export const setLanguage = (lang: LanguageEnum): void => {
+  selectedLanguage.next(lang);
   language.next(LANGUAGES[lang]);
 };

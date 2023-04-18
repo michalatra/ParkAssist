@@ -1061,4 +1061,42 @@ export const styles = StyleSheet.create({
     resizeMode: "contain",
     tintColor: ColorsEnum.WHITE,
   },
+
+  dropdown: {
+    position: "relative",
+  },
+
+  dropdownContent: {
+    position: "absolute",
+    top: 40,
+    right: -10,
+    backgroundColor: ColorsEnum.BACKGROUND_LIGHT,
+    padding: 10,
+    borderRadius: 10,
+    elevation: 10,
+  },
+
+  dropdownItemContainer: {
+    paddingVertical: 10,
+  },
+
+  dropdownItem: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  dropdownItemIcon: {
+    width: 15,
+    height: 15,
+    marginRight: 10,
+    resizeMode: "contain",
+  },
+
+  dropdownItemLabel: {
+    color: ColorsEnum.WHITE,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
 });
