@@ -3,7 +3,6 @@ import { Image, Text, TouchableOpacity, View } from "react-native";
 import useLanguage from "../../../../language/LanguageHook";
 import { styles } from "../../../../styles/styles";
 import { DetectorTypeEnum } from "../../../../models/enums/DetectorTypeEnum";
-import { DetectorData } from "../../../../models/DetectorData";
 
 interface DetectorGroupTileProps {
   groupName: string;
@@ -16,9 +15,9 @@ const getIcon = (detectorsType: DetectorTypeEnum): any => {
   switch (detectorsType) {
     case DetectorTypeEnum.ULTRA_SONIC:
       return require("../../../../assets/icons/sound.png");
-    case DetectorTypeEnum.INFRARED:
+    case DetectorTypeEnum.SINGLE_POINT_LIDAR:
       return require("../../../../assets/icons/infrared.png");
-    case DetectorTypeEnum.LIDAR:
+    case DetectorTypeEnum.MULTI_POINT_LIDAR:
       return require("../../../../assets/icons/lidar.png");
   }
 };

@@ -211,11 +211,11 @@ export const setupWiredDetectors = (detectors: DetectorData[]) => {
   const ultrasonicDetectors = detectors.filter(
     (d) => d.type === DetectorTypeEnum.ULTRA_SONIC
   );
-  const infraredDetectors = detectors.filter(
-    (d) => d.type === DetectorTypeEnum.INFRARED
+  const singlePointLidar = detectors.filter(
+    (d) => d.type === DetectorTypeEnum.SINGLE_POINT_LIDAR
   );
-  const lidarDetectors = detectors.filter(
-    (d) => d.type === DetectorTypeEnum.LIDAR
+  const multiPointLidar = detectors.filter(
+    (d) => d.type === DetectorTypeEnum.MULTI_POINT_LIDAR
   );
 
   let message = BluetoothMessagesEnum.SET_ULTRASONIC.toString();

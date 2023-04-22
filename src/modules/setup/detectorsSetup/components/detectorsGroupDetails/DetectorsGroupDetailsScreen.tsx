@@ -15,7 +15,7 @@ import {
 } from "../../../../../services/DetectorsService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ScreenNamesEnum } from "../../../../../models/enums/ScreenNamesEnum";
-import { filter, first, map, tap } from "rxjs";
+import { first, map, tap } from "rxjs";
 
 const DetectorsGroupDetailsScreen = ({ navigation, route }: any) => {
   const LANGUAGE = useLanguage();
@@ -52,7 +52,7 @@ const DetectorsGroupDetailsScreen = ({ navigation, route }: any) => {
         .subscribe((detectors) => setDetectors(detectors));
     });
 
-    return () => subscription.unsubscribe();
+    // return () => subscription.unsubscribe();
   }, []);
 
   const handleAddNewDetector = (): void => {
@@ -82,7 +82,12 @@ const DetectorsGroupDetailsScreen = ({ navigation, route }: any) => {
   return (
     <View style={styles.initContainer}>
       <WavyBackground color={ColorsEnum.GREEN_DARK} />
-      <NavBar navigation={navigation} showSettings={true} showHelp={true} />
+      <NavBar
+        navigation={navigation}
+        showLanguage={false}
+        showSettings={true}
+        showHelp={true}
+      />
       <View style={styles.layoutContainer}>
         <View style={styles.instructionContainer}>
           <Text style={styles.instructionText}>

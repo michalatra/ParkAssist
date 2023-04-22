@@ -37,8 +37,8 @@ const LANGUAGES: AppLanguageType = {
       SAVE: "Zapisz",
       DETECTOR_TYPE: {
         ULTRA_SONIC: "Czujniki ultradźwiękowe",
-        INFRARED: "Czujniki podczerwieni",
-        LIDAR: "Lidar",
+        SINGLE_POINT_LIDAR: "Lidar jednopunktowy",
+        MULTI_POINT_LIDAR: "Lidar wielopunktowy",
       },
       DETECTOR_COUNT: "Liczba czujników",
       ADD_NEW_DETECTOR: "Dodaj nowy czujnik",
@@ -61,8 +61,8 @@ const LANGUAGES: AppLanguageType = {
       },
       DETECTORS: {
         ULTRA_SONIC: "Ultradźwięki",
-        INFRARED: "Podczerwień",
-        LIDAR: "Lidar",
+        SINGLE_POINT_LIDAR: "Lidar jednopunktowy",
+        MULTI_POINT_LIDAR: "Lidar wielopunktowy",
       },
     },
     CONTROLLER: {
@@ -114,8 +114,8 @@ const LANGUAGES: AppLanguageType = {
       SAVE: "Save",
       DETECTOR_TYPE: {
         ULTRA_SONIC: "Ultrasonic Detectors",
-        INFRARED: "Infrared Detectors",
-        LIDAR: "Lidar",
+        SINGLE_POINT_LIDAR: "Single-point Lidar",
+        MULTI_POINT_LIDAR: "Multi-point Lidar",
       },
       DETECTOR_COUNT: "Detector count",
       ADD_NEW_DETECTOR: "Add new detector",
@@ -138,8 +138,8 @@ const LANGUAGES: AppLanguageType = {
       },
       DETECTORS: {
         ULTRA_SONIC: "Ultrasonic",
-        INFRARED: "Infrared",
-        LIDAR: "Lidar",
+        SINGLE_POINT_LIDAR: "Single-point Lidar",
+        MULTI_POINT_LIDAR: "Multi-point Lidar",
       },
     },
     CONTROLLER: {

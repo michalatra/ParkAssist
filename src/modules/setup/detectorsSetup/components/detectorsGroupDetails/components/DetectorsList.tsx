@@ -15,6 +15,11 @@ const DetectorsList = ({ detectors, onEdit, onRemove }: DetectorsListProps) => {
       contentContainerStyle={styles.centeredContainer}
       style={styles.detectorGroup}
     >
+      {detectors.length === 0 && (
+        <View style={styles.emptyListInfo}>
+          <Text style={styles.emptyListInfoText}>Brak Czujników</Text>
+        </View>
+      )}
       {detectors.map((detector, index) => (
         <View key={index} style={styles.detectorListItem}>
           <View style={styles.detectorListItemContent}>

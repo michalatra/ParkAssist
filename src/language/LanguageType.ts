@@ -40,8 +40,8 @@ export type LanguageType = {
     SAVE: string;
     DETECTOR_TYPE: {
       ULTRA_SONIC: string;
-      INFRARED: string;
-      LIDAR: string;
+      SINGLE_POINT_LIDAR: string;
+      MULTI_POINT_LIDAR: string;
     };
     DETECTOR_COUNT: string;
     ADD_NEW_DETECTOR: string;
@@ -64,8 +64,8 @@ export type LanguageType = {
     };
     DETECTORS: {
       ULTRA_SONIC: string;
-      INFRARED: string;
-      LIDAR: string;
+      SINGLE_POINT_LIDAR: string;
+      MULTI_POINT_LIDAR: string;
     };
   };
 

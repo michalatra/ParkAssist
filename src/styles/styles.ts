@@ -618,6 +618,23 @@ export const styles = StyleSheet.create({
     resizeMode: "contain",
   },
 
+  emptyListInfo: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 10,
+    borderRadius: 10,
+    width: "90%",
+    backgroundColor: ColorsEnum.BACKGROUND_MEDIUM,
+    elevation: 5,
+  },
+
+  emptyListInfoText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: ColorsEnum.WHITE,
+  },
+
   detectorListItem: {
     display: "flex",
     flexDirection: "row",

@@ -137,7 +137,12 @@ const AddEditDetectorScreen = ({ navigation, route }: any) => {
   return (
     <View style={styles.initContainer}>
       <WavyBackground color={ColorsEnum.GREEN_DARK} />
-      <NavBar navigation={navigation} showSettings={false} showHelp={false} />
+      <NavBar
+        navigation={navigation}
+        showLanguage={false}
+        showSettings={false}
+        showHelp={false}
+      />
       <View style={styles.layoutContainer}>
         <View style={styles.instructionContainer}>
           <Text style={styles.instructionText}>
@@ -201,12 +206,12 @@ const AddEditDetectorScreen = ({ navigation, route }: any) => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={
-                  !!type && type === DetectorTypeEnum.INFRARED
+                  !!type && type === DetectorTypeEnum.SINGLE_POINT_LIDAR
                     ? styles.detectorAddSectionOptionActive
                     : styles.detectorAddSectionOption
                 }
                 onPress={() =>
-                  handleSelectDetectorType(DetectorTypeEnum.INFRARED)
+                  handleSelectDetectorType(DetectorTypeEnum.SINGLE_POINT_LIDAR)
                 }
               >
                 <Image
@@ -215,21 +220,25 @@ const AddEditDetectorScreen = ({ navigation, route }: any) => {
                 />
                 <Text
                   style={
-                    !!type && type === DetectorTypeEnum.INFRARED
+                    !!type && type === DetectorTypeEnum.SINGLE_POINT_LIDAR
                       ? styles.detectorAddSectionOptionTextActive
                       : styles.detectorAddSectionOptionText
                   }
                 >
-                  {LANGUAGE ? LANGUAGE.DETECTORS_SETUP.DETECTORS.INFRARED : ""}
+                  {LANGUAGE
+                    ? LANGUAGE.DETECTORS_SETUP.DETECTORS.SINGLE_POINT_LIDAR
+                    : ""}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={
-                  !!type && type === DetectorTypeEnum.LIDAR
+                  !!type && type === DetectorTypeEnum.MULTI_POINT_LIDAR
                     ? styles.detectorAddSectionOptionActive
                     : styles.detectorAddSectionOption
                 }
-                onPress={() => handleSelectDetectorType(DetectorTypeEnum.LIDAR)}
+                onPress={() =>
+                  handleSelectDetectorType(DetectorTypeEnum.MULTI_POINT_LIDAR)
+                }
               >
                 <Image
                   source={require("../../../../../assets/icons/lidar.png")}
@@ -237,12 +246,14 @@ const AddEditDetectorScreen = ({ navigation, route }: any) => {
                 />
                 <Text
                   style={
-                    !!type && type === DetectorTypeEnum.LIDAR
+                    !!type && type === DetectorTypeEnum.MULTI_POINT_LIDAR
                       ? styles.detectorAddSectionOptionTextActive
                       : styles.detectorAddSectionOptionText
                   }
                 >
-                  {LANGUAGE ? LANGUAGE.DETECTORS_SETUP.DETECTORS.LIDAR : ""}
+                  {LANGUAGE
+                    ? LANGUAGE.DETECTORS_SETUP.DETECTORS.MULTI_POINT_LIDAR
+                    : ""}
                 </Text>
               </TouchableOpacity>
             </View>

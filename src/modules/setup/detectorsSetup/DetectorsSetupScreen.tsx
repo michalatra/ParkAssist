@@ -23,10 +23,12 @@ const DetectorsSetupScreen = ({ navigation, route }: any) => {
   const [ultrasonicDetectors, setUltrasonicDetectors] = useState<
     DetectorData[]
   >([]);
-  const [infraredDetectors, setInfraredDetectors] = useState<DetectorData[]>(
-    []
-  );
-  const [lidarDetectors, setLidarDetectors] = useState<DetectorData[]>([]);
+  const [singlePointLidarDetectors, setSinglePointLidarDetectors] = useState<
+    DetectorData[]
+  >([]);
+  const [multiPointLidarDetectors, setMultiPointLidarDetectors] = useState<
+    DetectorData[]
+  >([]);
   const LANGUAGE = useLanguage();
 
   useEffect(() => {
@@ -40,18 +42,18 @@ const DetectorsSetupScreen = ({ navigation, route }: any) => {
             (detector) => detector.type === DetectorTypeEnum.ULTRA_SONIC
           ),
           detectors.filter(
-            (detector) => detector.type === DetectorTypeEnum.INFRARED
+            (detector) => detector.type === DetectorTypeEnum.SINGLE_POINT_LIDAR
           ),
           detectors.filter(
-            (detector) => detector.type === DetectorTypeEnum.LIDAR
+            (detector) => detector.type === DetectorTypeEnum.MULTI_POINT_LIDAR
           ),
         ])
       )
       .subscribe({
         next: ([ultrasonicDetectors, infraredDetectors, lidarDetectors]) => {
           setUltrasonicDetectors(ultrasonicDetectors);
-          setInfraredDetectors(infraredDetectors);
-          setLidarDetectors(lidarDetectors);
+          setSinglePointLidarDetectors(infraredDetectors);
+          setMultiPointLidarDetectors(lidarDetectors);
           setLoading(false);
         },
         error: (error) => {
@@ -73,18 +75,19 @@ const DetectorsSetupScreen = ({ navigation, route }: any) => {
               (detector) => detector.type === DetectorTypeEnum.ULTRA_SONIC
             ),
             detectors.filter(
-              (detector) => detector.type === DetectorTypeEnum.INFRARED
+              (detector) =>
+                detector.type === DetectorTypeEnum.SINGLE_POINT_LIDAR
             ),
             detectors.filter(
-              (detector) => detector.type === DetectorTypeEnum.LIDAR
+              (detector) => detector.type === DetectorTypeEnum.MULTI_POINT_LIDAR
             ),
           ])
         )
         .subscribe({
           next: ([ultrasonicDetectors, infraredDetectors, lidarDetectors]) => {
             setUltrasonicDetectors(ultrasonicDetectors);
-            setInfraredDetectors(infraredDetectors);
-            setLidarDetectors(lidarDetectors);
+            setSinglePointLidarDetectors(infraredDetectors);
+            setMultiPointLidarDetectors(lidarDetectors);
             setLoading(false);
           },
           error: (error) => {
@@ -111,7 +114,12 @@ const DetectorsSetupScreen = ({ navigation, route }: any) => {
   return (
     <View style={styles.initContainer}>
       <WavyBackground color={ColorsEnum.GREEN_DARK} />
-      <NavBar navigation={navigation} showSettings={false} showHelp={true} />
+      <NavBar
+        navigation={navigation}
+        showLanguage={false}
+        showSettings={false}
+        showHelp={true}
+      />
       <View style={styles.layoutContainer}>
         <View style={styles.instructionContainer}>
           <Text style={styles.instructionText}>
@@ -137,22 +145,32 @@ const DetectorsSetupScreen = ({ navigation, route }: any) => {
           />
           <DetectorGroupTile
             groupName={
-              LANGUAGE ? LANGUAGE.DETECTORS_SETUP.DETECTOR_TYPE.INFRARED : ""
+              LANGUAGE
+                ? LANGUAGE.DETECTORS_SETUP.DETECTOR_TYPE.SINGLE_POINT_LIDAR
+                : ""
             }
-            detectorsType={DetectorTypeEnum.INFRARED}
-            detectorsQuantity={infraredDetectors.length}
+            detectorsType={DetectorTypeEnum.SINGLE_POINT_LIDAR}
+            detectorsQuantity={singlePointLidarDetectors.length}
             onSelect={() =>
-              handleGroupSelect(DetectorTypeEnum.INFRARED, infraredDetectors)
+              handleGroupSelect(
+                DetectorTypeEnum.SINGLE_POINT_LIDAR,
+                singlePointLidarDetectors
+              )
             }
           />
           <DetectorGroupTile
             groupName={
-              LANGUAGE ? LANGUAGE.DETECTORS_SETUP.DETECTOR_TYPE.LIDAR : ""
+              LANGUAGE
+                ? LANGUAGE.DETECTORS_SETUP.DETECTOR_TYPE.MULTI_POINT_LIDAR
+                : ""
             }
-            detectorsType={DetectorTypeEnum.LIDAR}
-            detectorsQuantity={lidarDetectors.length}
+            detectorsType={DetectorTypeEnum.MULTI_POINT_LIDAR}
+            detectorsQuantity={multiPointLidarDetectors.length}
             onSelect={() =>
-              handleGroupSelect(DetectorTypeEnum.LIDAR, lidarDetectors)
+              handleGroupSelect(
+                DetectorTypeEnum.MULTI_POINT_LIDAR,
+                multiPointLidarDetectors
+              )
             }
           />
         </ScrollView>
