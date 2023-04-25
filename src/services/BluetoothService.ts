@@ -19,6 +19,8 @@ import { DetectorData } from "../models/DetectorData";
 import { BluetoothMessagesEnum } from "../models/enums/BluetoothMessagesEnum";
 import { BluetoothErrorEnum } from "../models/enums/BluetoothErrorEnum";
 import { DetectorTypeEnum } from "../models/enums/DetectorTypeEnum";
+import { BluetoothCommandMessage } from "../models/BluetoothCommandMessage";
+import { BluetoothCommandEnum } from "../models/enums/BluetoothCommandEnum";
 
 export const bluetoothManager = new BleManager();
 
@@ -261,6 +263,25 @@ export const setupWiredDetectors = (detectors: DetectorData[]) => {
           })
       : Promise.reject()
   );
+};
+
+const setupUltrasonicDetectors = (ultrasonicDetectors: DetectorData[]) => {
+  const command: BluetoothCommandMessage = {
+    command: BluetoothCommandEnum.ENABLE_ULTRASONIC_DETECTORS,
+    detectorCount: ultrasonicDetectors.length,
+    socketIndices: ultrasonicDetectors.map((d) => d.socketIndex - 1),
+    detectorIds: ultrasonicDetectors.map((d) => d.id),
+  };
+
+  const message = encode(JSON.stringify(command));
+
+    return from(
+        connectedDeviceCharacteristic.getValue()
+            ? connectedDeviceCharacteristic
+                .getValue()!
+                .writeWithResponse(message)
+                .catch((_) => bluetoothError.next(BluetoothErrorEnum.WRITING_ERROR))
+                .then((characteristic) => console.log(characteristic!.read()))
 };
 
 export const startMeasurement = () => {
