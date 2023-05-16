@@ -6,6 +6,7 @@ import { map, Observable, of } from "rxjs";
 import { StorageKeysEnum } from "../models/enums/StorageKeysEnum";
 import { readValue, saveValue } from "./StorageService";
 import { AsyncStorageStatic } from "@react-native-async-storage/async-storage";
+import { DetectorStorageData } from "../models/DetectorStorageData";
 
 let detectorsCount = 0;
 let detectorsLocations: DetectorLocationData[] = [];
@@ -81,14 +82,14 @@ export const getDetectorsLocations = (): DetectorLocationData[] => {
 
 export const getDetectors = (
   storage: AsyncStorageStatic
-): Observable<DetectorData[]> => {
+): Observable<DetectorStorageData> => {
   return readValue(storage, StorageKeysEnum.DETECTORS).pipe(
-    map((detectors: DetectorData[]) => detectors || [])
+    map((detectors: DetectorStorageData) => detectors || null)
   );
 };
 
 export const updateDetectors = (
-  detectors: DetectorData[],
+  detectors: DetectorStorageData,
   storage: AsyncStorageStatic
 ): Observable<any> => {
   return saveValue(storage, StorageKeysEnum.DETECTORS, detectors);

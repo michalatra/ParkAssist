@@ -19,11 +19,12 @@ import {
   updateDetectors,
 } from "../../../../../services/DetectorsService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { first, tap } from "rxjs";
+import { filter, first, take, tap } from "rxjs";
 import ActionButton from "../../../../common/ActionButton";
 import useLanguage from "../../../../../language/LanguageHook";
 import { DetectorLocationEnum } from "../../../../../models/enums/DetectorLocationEnum";
 import { ScreenNamesEnum } from "../../../../../models/enums/ScreenNamesEnum";
+import { DetectorStorageData } from "../../../../../models/DetectorStorageData";
 
 const AddEditDetectorScreen = ({ navigation, route }: any) => {
   const LANGUAGE = useLanguage();
@@ -42,7 +43,11 @@ const AddEditDetectorScreen = ({ navigation, route }: any) => {
     null
   );
   const [socketIndex, setSocketIndex] = React.useState<number | null>(null);
-  const [detectors, setDetectors] = React.useState<DetectorData[]>([]);
+  const [detectors, setDetectors] = React.useState<DetectorStorageData>({
+    [DetectorTypeEnum.ULTRA_SONIC]: [],
+    [DetectorTypeEnum.SINGLE_POINT_LIDAR]: [],
+    [DetectorTypeEnum.MULTI_POINT_LIDAR]: [],
+  });
   const [loading, setLoading] = React.useState<boolean>(false);
 
   useEffect(() => {
@@ -64,7 +69,8 @@ const AddEditDetectorScreen = ({ navigation, route }: any) => {
 
     getDetectors(AsyncStorage)
       .pipe(
-        first(),
+        take(1),
+        filter(Boolean),
         tap((_) => setLoading(false))
       )
       .subscribe((detectors) => setDetectors(detectors));
@@ -72,7 +78,11 @@ const AddEditDetectorScreen = ({ navigation, route }: any) => {
 
   const isDetectorValid = () => {
     return (
-      name.length > 0 && !!type && !!locationType && !!location && !!socketIndex
+      name.length > 0 &&
+      !!type &&
+      locationType !== null &&
+      location !== null &&
+      !!socketIndex
     );
   };
 
@@ -93,24 +103,42 @@ const AddEditDetectorScreen = ({ navigation, route }: any) => {
   };
 
   const handleSave = () => {
-    let updatedDetectors: DetectorData[];
+    let updatedDetectors: DetectorStorageData = { ...detectors };
 
     if (detectorData) {
-      const detectorIndex = detectors.findIndex(
-        (d) => d.id === detectorData.id
-      );
-      updatedDetectors = [...detectors];
-      updatedDetectors[detectorIndex] = {
-        ...detectorData,
-        name,
-        type: type!,
-        locationType: locationType!,
-        location: location!,
-        socketIndex: socketIndex!,
-      };
+      if (type !== baseDetectorType) {
+        updatedDetectors[baseDetectorType] = updatedDetectors[
+          baseDetectorType
+        ].filter((d) => d.id !== detectorData.id);
+
+        updatedDetectors[type!] = [
+          ...updatedDetectors[type!],
+          {
+            ...detectorData,
+            name,
+            type: type!,
+            locationType: locationType!,
+            location: location!,
+            socketIndex: socketIndex!,
+          },
+        ];
+      } else {
+        const detectorIndex = updatedDetectors[detectorData.type].findIndex(
+          (d) => d.id === detectorData.id
+        );
+
+        updatedDetectors[detectorData.type][detectorIndex] = {
+          ...detectorData,
+          name,
+          type: type!,
+          locationType: locationType!,
+          location: location!,
+          socketIndex: socketIndex!,
+        };
+      }
     } else {
-      updatedDetectors = [
-        ...detectors,
+      updatedDetectors[type!] = [
+        ...updatedDetectors[type!],
         {
           id: new Date().getTime(),
           name,
@@ -267,7 +295,7 @@ const AddEditDetectorScreen = ({ navigation, route }: any) => {
             <View style={styles.detectorAddSectionOptions}>
               <TouchableOpacity
                 style={
-                  !!locationType &&
+                  locationType !== null &&
                   locationType === DetectorLocationTypeEnum.FRONT
                     ? styles.detectorAddSectionOptionActive
                     : styles.detectorAddSectionOption
@@ -278,7 +306,7 @@ const AddEditDetectorScreen = ({ navigation, route }: any) => {
               >
                 <Text
                   style={
-                    !!locationType &&
+                    locationType !== null &&
                     locationType === DetectorLocationTypeEnum.FRONT
                       ? styles.detectorAddSectionOptionTextActive
                       : styles.detectorAddSectionOptionText
@@ -289,7 +317,7 @@ const AddEditDetectorScreen = ({ navigation, route }: any) => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={
-                  !!locationType &&
+                  locationType !== null &&
                   locationType === DetectorLocationTypeEnum.BACK
                     ? styles.detectorAddSectionOptionActive
                     : styles.detectorAddSectionOption
@@ -300,7 +328,7 @@ const AddEditDetectorScreen = ({ navigation, route }: any) => {
               >
                 <Text
                   style={
-                    !!locationType &&
+                    locationType !== null &&
                     locationType === DetectorLocationTypeEnum.BACK
                       ? styles.detectorAddSectionOptionTextActive
                       : styles.detectorAddSectionOptionText
@@ -320,7 +348,7 @@ const AddEditDetectorScreen = ({ navigation, route }: any) => {
             <View style={styles.detectorAddSectionOptions}>
               <TouchableOpacity
                 style={
-                  !!location && location === DetectorLocationEnum.LEFT
+                  location !== null && location === DetectorLocationEnum.LEFT
                     ? styles.detectorAddSectionOptionActive
                     : styles.detectorAddSectionOption
                 }
@@ -328,7 +356,7 @@ const AddEditDetectorScreen = ({ navigation, route }: any) => {
               >
                 <Text
                   style={
-                    !!location && location === DetectorLocationEnum.LEFT
+                    location !== null && location === DetectorLocationEnum.LEFT
                       ? styles.detectorAddSectionOptionTextActive
                       : styles.detectorAddSectionOptionText
                   }
@@ -338,7 +366,8 @@ const AddEditDetectorScreen = ({ navigation, route }: any) => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={
-                  !!location && location === DetectorLocationEnum.CENTER_LEFT
+                  location !== null &&
+                  location === DetectorLocationEnum.CENTER_LEFT
                     ? styles.detectorAddSectionOptionActive
                     : styles.detectorAddSectionOption
                 }

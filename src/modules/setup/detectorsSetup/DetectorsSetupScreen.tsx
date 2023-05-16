@@ -12,7 +12,8 @@ import { DetectorData } from "../../../models/DetectorData";
 import { ScreenNamesEnum } from "../../../models/enums/ScreenNamesEnum";
 import { getDetectors } from "../../../services/DetectorsService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { first, map } from "rxjs";
+import { filter, first, map, take } from "rxjs";
+import { setupWiredDetectors } from "../../../services/BluetoothService";
 
 const DetectorsSetupScreen = ({ navigation, route }: any) => {
   const returnScreen: string = route.params?.returnScreen
@@ -32,28 +33,27 @@ const DetectorsSetupScreen = ({ navigation, route }: any) => {
   const LANGUAGE = useLanguage();
 
   useEffect(() => {
+    setupDetectors();
+  }, []);
+
+  useEffect(() => {
+    navigation.addListener("focus", () => setupDetectors());
+  }, []);
+
+  const setupDetectors = () => {
     setLoading(true);
 
     getDetectors(AsyncStorage)
-      .pipe(
-        first(),
-        map((detectors) => [
-          detectors.filter(
-            (detector) => detector.type === DetectorTypeEnum.ULTRA_SONIC
-          ),
-          detectors.filter(
-            (detector) => detector.type === DetectorTypeEnum.SINGLE_POINT_LIDAR
-          ),
-          detectors.filter(
-            (detector) => detector.type === DetectorTypeEnum.MULTI_POINT_LIDAR
-          ),
-        ])
-      )
+      .pipe(first(), filter(Boolean))
       .subscribe({
-        next: ([ultrasonicDetectors, infraredDetectors, lidarDetectors]) => {
-          setUltrasonicDetectors(ultrasonicDetectors);
-          setSinglePointLidarDetectors(infraredDetectors);
-          setMultiPointLidarDetectors(lidarDetectors);
+        next: (detectors) => {
+          setUltrasonicDetectors(detectors[DetectorTypeEnum.ULTRA_SONIC]);
+          setSinglePointLidarDetectors(
+            detectors[DetectorTypeEnum.SINGLE_POINT_LIDAR]
+          );
+          setMultiPointLidarDetectors(
+            detectors[DetectorTypeEnum.MULTI_POINT_LIDAR]
+          );
           setLoading(false);
         },
         error: (error) => {
@@ -61,42 +61,7 @@ const DetectorsSetupScreen = ({ navigation, route }: any) => {
           setLoading(false);
         },
       });
-  }, []);
-
-  useEffect(() => {
-    navigation.addListener("focus", () => {
-      setLoading(true);
-
-      getDetectors(AsyncStorage)
-        .pipe(
-          first(),
-          map((detectors) => [
-            detectors.filter(
-              (detector) => detector.type === DetectorTypeEnum.ULTRA_SONIC
-            ),
-            detectors.filter(
-              (detector) =>
-                detector.type === DetectorTypeEnum.SINGLE_POINT_LIDAR
-            ),
-            detectors.filter(
-              (detector) => detector.type === DetectorTypeEnum.MULTI_POINT_LIDAR
-            ),
-          ])
-        )
-        .subscribe({
-          next: ([ultrasonicDetectors, infraredDetectors, lidarDetectors]) => {
-            setUltrasonicDetectors(ultrasonicDetectors);
-            setSinglePointLidarDetectors(infraredDetectors);
-            setMultiPointLidarDetectors(lidarDetectors);
-            setLoading(false);
-          },
-          error: (error) => {
-            console.log(error);
-            setLoading(false);
-          },
-        });
-    });
-  }, []);
+  };
 
   const handleGroupSelect = (
     detectorType: DetectorTypeEnum,
@@ -108,7 +73,9 @@ const DetectorsSetupScreen = ({ navigation, route }: any) => {
   };
 
   const handleSave = (): void => {
-    navigation.navigate(returnScreen);
+    setupWiredDetectors()
+      .pipe(take(1))
+      .subscribe(() => navigation.navigate(returnScreen));
   };
 
   return (

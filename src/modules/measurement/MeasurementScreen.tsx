@@ -15,12 +15,13 @@ import { ScreenNamesEnum } from "../../models/enums/ScreenNamesEnum";
 import { readValue } from "../../services/StorageService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StorageKeysEnum } from "../../models/enums/StorageKeysEnum";
-import { switchMap, tap } from "rxjs";
+import { finalize, switchMap, take, tap } from "rxjs";
 import { DetectorLocationData } from "../../models/DetectorLocationData";
 import NavBar from "../common/NavBar";
 import WavyBackground from "../common/WavyBackground";
 import ActionButton from "../common/ActionButton";
 import useLanguage from "../../language/LanguageHook";
+import MeasurementIndicator from "./components/MeasurementIndicator";
 
 const MeasurementScreen = ({ navigation }: any) => {
   const [measurement, setMeasurement] = useState<String>("");
@@ -36,27 +37,22 @@ const MeasurementScreen = ({ navigation }: any) => {
     });
   };
 
+  const handleStop = () => {
+    stopMeasurement()
+      .pipe(take(1))
+      .subscribe(() => onStop());
+  };
+
   useEffect(() => {
     const subscription = readValue(
       AsyncStorage,
       StorageKeysEnum.WIRED_DETECTORS_LOCATIONS
     )
-      .pipe(
-        // tap((locations) => {
-        //   setDetectorLocations(locations);
-        //   locations.forEach((location: DetectorLocationData) => {
-        //     toast.show(
-        //       `Detector: ${location.index}, Location type: ${location.locationType}, Location: ${location.location} `
-        //     );
-        //   });
-        // }),
-        switchMap((_) => startMeasurement())
-      )
+      .pipe(switchMap((_) => startMeasurement()))
       .subscribe((currentMeasurement) => setMeasurement(currentMeasurement));
 
     return () => {
       subscription.unsubscribe();
-      stopMeasurement();
     };
   }, []);
 
@@ -64,7 +60,7 @@ const MeasurementScreen = ({ navigation }: any) => {
     const subscription = deviceHasDisconnected$.subscribe((disconnected) => {
       if (disconnected) {
         toast.show("Device has disconnected");
-        onStop();
+        // handleStop();
       }
     });
 
@@ -75,7 +71,7 @@ const MeasurementScreen = ({ navigation }: any) => {
     const subscription = bluetoothError$.subscribe((error) => {
       console.log(error);
       toast.show("An unexpected error occurred");
-      onStop();
+      // handleStop();
     });
 
     return () => subscription.unsubscribe();
@@ -97,21 +93,27 @@ const MeasurementScreen = ({ navigation }: any) => {
   return (
     <View style={styles.container}>
       <WavyBackground color={ColorsEnum.CORAL} />
-      <NavBar navigation={navigation} showSettings={false} showHelp={false} />
+      <NavBar
+        navigation={navigation}
+        showSettings={false}
+        showHelp={false}
+        showLanguage={false}
+      />
       <View style={styles.measurementContainer}>
-        <View style={styles.measurementRowContainer}></View>
-        <Image
-          style={styles.measurementCarImage}
-          source={require("../../assets/icons/top_shot.png")}
-        />
-        <View style={styles.measurementRowContainer}></View>
-        <View style={styles.instructionContainerStandalone}>
-          <Text style={styles.instructionText}>{measurement}</Text>
-        </View>
+        {/*<View style={styles.measurementRowContainer}></View>*/}
+        {/*<Image*/}
+        {/*  style={styles.measurementCarImage}*/}
+        {/*  source={require("../../assets/icons/top_shot.png")}*/}
+        {/*/>*/}
+        {/*<View style={styles.measurementRowContainer}></View>*/}
+        {/*<View style={styles.instructionContainerStandalone}>*/}
+        {/*  <Text>{measurement}</Text>*/}
+        {/*</View>*/}
+        <MeasurementIndicator />
       </View>
       <ActionButton
         title={LANGUAGE ? LANGUAGE.MEASUREMENT.STOP_MEASUREMENT : ""}
-        action={onStop}
+        action={handleStop}
       />
     </View>
   );

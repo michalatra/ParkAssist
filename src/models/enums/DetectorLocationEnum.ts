@@ -1,6 +1,6 @@
 export enum DetectorLocationEnum {
-  LEFT = "left",
-  CENTER_LEFT = "centerLeft",
-  CENTER_RIGHT = "centerRight",
-  RIGHT = "right",
+  LEFT = 0,
+  CENTER_LEFT = 1,
+  CENTER_RIGHT = 2,
+  RIGHT = 3,
 }

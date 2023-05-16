@@ -16,10 +16,18 @@ import { enableScreens } from "react-native-screens";
 import DetectorsSetupScreen from "./src/modules/setup/detectorsSetup/DetectorsSetupScreen";
 import DetectorsGroupDetailsScreen from "./src/modules/setup/detectorsSetup/components/detectorsGroupDetails/DetectorsGroupDetailsScreen";
 import AddEditDetectorScreen from "./src/modules/setup/detectorsSetup/components/addEditDetector/AddEditDetectorScreen";
+import { useEffect } from "react";
+import { initializeBluetooth } from "./src/services/BluetoothService";
 
 const NavigationStack = createNativeStackNavigator();
 
 const App = () => {
+  useEffect(() => {
+    const subscription = initializeBluetooth().subscribe();
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   enableScreens();
   return (
     <ToastProvider>

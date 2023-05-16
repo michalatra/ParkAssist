@@ -15,7 +15,8 @@ import {
 } from "../../../../../services/DetectorsService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ScreenNamesEnum } from "../../../../../models/enums/ScreenNamesEnum";
-import { first, map, tap } from "rxjs";
+import { filter, take, tap } from "rxjs";
+import { DetectorStorageData } from "../../../../../models/DetectorStorageData";
 
 const DetectorsGroupDetailsScreen = ({ navigation, route }: any) => {
   const LANGUAGE = useLanguage();
@@ -23,37 +24,33 @@ const DetectorsGroupDetailsScreen = ({ navigation, route }: any) => {
   const [detectorType, setDetectorType] = useState<DetectorTypeEnum>(
     route.params.detectorType
   );
-  const [detectors, setDetectors] = useState<DetectorData[]>([]);
+  const [detectors, setDetectors] = useState<DetectorStorageData>({
+    [DetectorTypeEnum.ULTRA_SONIC]: [],
+    [DetectorTypeEnum.SINGLE_POINT_LIDAR]: [],
+    [DetectorTypeEnum.MULTI_POINT_LIDAR]: [],
+  });
 
   useEffect(() => {
+    setupDetectors();
+  }, []);
+
+  useEffect(() => {
+    const subscription = navigation.addListener("focus", () =>
+      setupDetectors()
+    );
+  }, []);
+
+  const setupDetectors = () => {
     setLoading(true);
 
     getDetectors(AsyncStorage)
       .pipe(
-        first(),
-        map((detectors) =>
-          detectors.filter((detector) => detector.type === detectorType)
-        ),
+        take(1),
+        filter(Boolean),
         tap((_) => setLoading(false))
       )
       .subscribe((detectors) => setDetectors(detectors));
-  }, []);
-
-  useEffect(() => {
-    const subscription = navigation.addListener("focus", () => {
-      getDetectors(AsyncStorage)
-        .pipe(
-          first(),
-          map((detectors) =>
-            detectors.filter((detector) => detector.type === detectorType)
-          ),
-          tap((_) => setLoading(false))
-        )
-        .subscribe((detectors) => setDetectors(detectors));
-    });
-
-    // return () => subscription.unsubscribe();
-  }, []);
+  };
 
   const handleAddNewDetector = (): void => {
     navigation.navigate(ScreenNamesEnum.ADD_EDIT_DETECTOR_SCREEN, {
@@ -70,9 +67,13 @@ const DetectorsGroupDetailsScreen = ({ navigation, route }: any) => {
   };
 
   const handleRemoveDetector = (detector: DetectorData): void => {
-    const updatedDetectors = detectors.filter((d) => d.id !== detector.id);
+    const updatedDetectors: DetectorStorageData = { ...detectors };
+    updatedDetectors[detector.type] = updatedDetectors[detector.type].filter(
+      (d) => d.id !== detector.id
+    );
+
     updateDetectors(updatedDetectors, AsyncStorage)
-      .pipe(first())
+      .pipe(take(1))
       .subscribe({
         next: () => setDetectors(updatedDetectors),
         error: (error) => console.log(error),
@@ -97,7 +98,7 @@ const DetectorsGroupDetailsScreen = ({ navigation, route }: any) => {
           </Text>
         </View>
         <DetectorsList
-          detectors={detectors}
+          detectors={detectors[detectorType]}
           onEdit={handleEditDetector}
           onRemove={handleRemoveDetector}
         />

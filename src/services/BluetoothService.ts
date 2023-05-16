@@ -1,13 +1,26 @@
 // @ts-ignore
-import { encode, decode } from "base-64";
-import { BleManager, Characteristic, Device } from "react-native-ble-plx";
+import { decode, encode } from "base-64";
+import {
+  BleManager,
+  Characteristic,
+  ConnectionPriority,
+  Device,
+  State,
+} from "react-native-ble-plx";
 import {
   BehaviorSubject,
+  catchError,
   delay,
+  EMPTY,
   filter,
-  finalize,
   from,
   interval,
+  map,
+  mergeMap,
+  Observable,
+  of,
+  repeat,
+  retry,
   Subject,
   switchMap,
   take,
@@ -16,13 +29,22 @@ import {
 } from "rxjs";
 import { PermissionsAndroid, Platform } from "react-native";
 import { DetectorData } from "../models/DetectorData";
-import { BluetoothMessagesEnum } from "../models/enums/BluetoothMessagesEnum";
 import { BluetoothErrorEnum } from "../models/enums/BluetoothErrorEnum";
 import { DetectorTypeEnum } from "../models/enums/DetectorTypeEnum";
 import { BluetoothCommandMessage } from "../models/BluetoothCommandMessage";
 import { BluetoothCommandEnum } from "../models/enums/BluetoothCommandEnum";
+import { BluetoothResponse } from "../models/BluetoothResponse";
+import { CommandResultEnum } from "../models/enums/CommandResultEnum";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { readValue } from "./StorageService";
+import { StorageKeysEnum } from "../models/enums/StorageKeysEnum";
+import { BluetoothDeviceData } from "../models/BluetoothDeviceData";
+import { getDetectors } from "./DetectorsService";
 
-export const bluetoothManager = new BleManager();
+const bluetoothManager = new BleManager();
+
+const bluetoothInitialized = new BehaviorSubject<boolean>(false);
+export const bluetoothInitialized$ = bluetoothInitialized.asObservable();
 
 const scanningFinished = new Subject<boolean>();
 export const scanningFinished$ = scanningFinished.asObservable();
@@ -30,11 +52,11 @@ export const scanningFinished$ = scanningFinished.asObservable();
 const bluetoothDevices = new BehaviorSubject<Device[]>([]);
 export const bluetoothDevices$ = bluetoothDevices.asObservable();
 
-const connectingFinishedSuccessfully = new Subject<boolean>();
+const connectingFinishedSuccessfully = new Subject<void>();
 export const connectingFinishedSuccessfully$ =
   connectingFinishedSuccessfully.asObservable();
 
-const deviceHasDisconnected = new Subject<boolean>();
+const deviceHasDisconnected = new Subject<void>();
 export const deviceHasDisconnected$ = deviceHasDisconnected.asObservable();
 
 const connectedDeviceCharacteristic =
@@ -45,14 +67,67 @@ export const connectedDeviceCharacteristic$ =
 const connectedDevice = new BehaviorSubject<Device | null>(null);
 export const connectedDevice$ = connectedDevice.asObservable();
 
-const currentMeasurement = new Subject<String>();
+const currentMeasurement = new Subject<BluetoothResponse>();
 export const currentMeasurement$ = currentMeasurement.asObservable();
 
-const measurementFinished = new Subject<boolean>();
+const measurementFinished = new Subject<void>();
 export const measurementFinished$ = measurementFinished.asObservable();
+
+const measurementActive = new BehaviorSubject<boolean>(false);
+export const measurementActive$ = measurementActive.asObservable();
 
 const bluetoothError = new Subject<BluetoothErrorEnum>();
 export const bluetoothError$ = bluetoothError.asObservable();
+
+export const initializeBluetooth = (): Observable<any> => {
+  return from(bluetoothManager.state()).pipe(
+    switchMap((state) =>
+      state === State.PoweredOn
+        ? from(bluetoothManager.disable()).pipe(
+            take(1),
+            switchMap(() => from(bluetoothManager.enable()))
+          )
+        : from(bluetoothManager.enable())
+    ),
+    switchMap((_) => requestLocationPermission()),
+    switchMap((_) => scanBluetoothDevices(15000)),
+    delay(3000),
+    take(1),
+    switchMap((_) => restoreSavedDevice()),
+    switchMap((_) => setupWiredDetectors()),
+    tap(() => bluetoothInitialized.next(true)),
+    catchError((error) => {
+      console.log("Error while initializing bluetooth: ", error);
+      bluetoothInitialized.next(false);
+      return of(null);
+    })
+  );
+};
+
+const restoreSavedDevice = (): Observable<Device | null> => {
+  return readValue(AsyncStorage, StorageKeysEnum.DEVICE).pipe(
+    switchMap((device: BluetoothDeviceData) =>
+      device
+        ? connectDeviceById(device.id).pipe(
+            retry({ count: 5, delay: 3000 }),
+            catchError((error) => {
+              console.log("Error while connecting to saved device: ", error);
+              return of(null);
+            })
+          )
+        : of(null)
+    )
+  );
+};
+
+export const reconnectDevice = (): Observable<boolean> => {
+  return scanBluetoothDevices(15000).pipe(
+    delay(3000),
+    take(1),
+    switchMap((_) => restoreSavedDevice()),
+    switchMap((_) => setupWiredDetectors())
+  );
+};
 
 const isDuplicate = (device: Device): boolean => {
   return (
@@ -65,8 +140,10 @@ const isValid = (device: Device): boolean => {
 };
 
 const scan = () => {
+  console.log("Scanning...");
   bluetoothManager.startDeviceScan(null, null, (error, device) => {
-    if (error) console.log(error);
+    if (error) return bluetoothError.next(BluetoothErrorEnum.SCAN_ERROR);
+
     if (device) {
       if (!isDuplicate(device) && isValid(device)) {
         bluetoothDevices.next([...bluetoothDevices.getValue(), device]);
@@ -75,247 +152,343 @@ const scan = () => {
   });
 };
 
-const handleScan = (duration: number) => {
-  requestLocationPermission()
-    .pipe(
-      take(1),
-      filter((permission) => permission === PermissionsAndroid.RESULTS.GRANTED)
-    )
-    .subscribe((_) => {
-      scan();
-      setTimeout(() => {
-        bluetoothManager.stopDeviceScan();
-        scanningFinished.next(true);
-      }, duration);
-    });
-};
+export const scanBluetoothDevices = (
+  duration: number
+): Observable<Device[]> => {
+  setTimeout(() => {
+    bluetoothManager.stopDeviceScan();
+    scanningFinished.next(true);
+  }, duration);
 
-export const scanBluetoothDevices = (duration: number) => {
-  const subscription = bluetoothManager.onStateChange((state) => {
-    if (state === "PoweredOn") {
-      handleScan(duration);
-      subscription.remove();
-    }
-  }, true);
+  scan();
 
   return bluetoothDevices$;
 };
 
-export const requestLocationPermission = () => {
+const requestLocationPermission = (): Observable<boolean> => {
+  console.log("Requesting location permission...");
+
   if (Platform.OS === "android" && Platform.Version >= 23) {
-    // Scanning: Checking permissions...
-    const enabled = PermissionsAndroid.check(
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-    );
-    if (!enabled) {
-      // Scanning: Permissions disabled, showing...
-      const granted = PermissionsAndroid.request(
+    return from(
+      PermissionsAndroid.check(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-      );
-      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-        // Scanning: Permissions not granted, aborting...
-        return;
-      }
-    }
+      )
+    ).pipe(
+      tap((enabled) =>
+        console.log("Permission status: ", enabled ? "enabled" : "disabled")
+      ),
+      switchMap((enabled) =>
+        enabled
+          ? of(true)
+          : from(
+              PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+              )
+            ).pipe(
+              map(
+                (permission) =>
+                  permission === PermissionsAndroid.RESULTS.GRANTED
+              ),
+              tap((result) => {
+                result
+                  ? console.log(
+                      "Location permission for bluetooth scanning granted"
+                    )
+                  : console.log(
+                      "Location permission for bluetooth scanning revoked"
+                    );
+              }),
+              tap(
+                (result) =>
+                  !result &&
+                  bluetoothError.next(BluetoothErrorEnum.PERMISSION_ERROR)
+              )
+            )
+      )
+    );
   }
+  console.log("Location permission for bluetooth scanning granted");
   return from(
-    // if (Platform.OS === "android" && Platform.Version >= 23) {
-    //   // Scanning: Checking permissions...
-    //   const enabled = PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-    //   if (!enabled) {
-    //     // Scanning: Permissions disabled, showing...
-    //     const granted = PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-    //     if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-    //       // Scanning: Permissions not granted, aborting...
-    //       return;
-    //     }
-    //   }
-    // }
     PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      {
-        title: "Location permission for bluetooth scanning",
-        message: "wahtever",
-        buttonNeutral: "Ask Me Later",
-        buttonNegative: "Cancel",
-        buttonPositive: "OK",
-      }
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
     )
   ).pipe(
+    map((permission) => permission === PermissionsAndroid.RESULTS.GRANTED),
     tap((result) => {
-      result === PermissionsAndroid.RESULTS.GRANTED
+      result
         ? console.log("Location permission for bluetooth scanning granted")
         : console.log("Location permission for bluetooth scanning revoked");
+    }),
+    tap(
+      (result) =>
+        !result && bluetoothError.next(BluetoothErrorEnum.PERMISSION_ERROR)
+    )
+  );
+};
+
+export const connectDeviceById = (
+  deviceId: string
+): Observable<Device | null> => {
+  console.log("Connecting device: ", deviceId);
+  return from(bluetoothManager.devices([deviceId])).pipe(
+    take(1),
+    map((devices) => {
+      if (devices.length > 0) return devices[0];
+      else {
+        bluetoothError.next(BluetoothErrorEnum.CONNECTING_ERROR);
+        throw new Error(BluetoothErrorEnum.CONNECTING_ERROR);
+      }
+    }),
+    switchMap((device) => connectDevice(device))
+  );
+};
+
+const connectDevice = (device: Device): Observable<Device | null> => {
+  return from(device.isConnected()).pipe(
+    take(1),
+    tap((isConnected) => isConnected && connectingFinishedSuccessfully.next()),
+    switchMap((isConnected) =>
+      isConnected
+        ? of(device)
+        : from(device.connect()).pipe(
+            switchMap((d) => from(d.discoverAllServicesAndCharacteristics())),
+            switchMap((d) =>
+              from(
+                d.readCharacteristicForService(
+                  "4fafc201-1fb5-459e-8fcc-c5c9c331914b",
+                  "beb5483e-36e1-4688-b7f5-ea07361b26a8"
+                )
+              )
+            ),
+            tap((characteristic) => {
+              connectedDevice.next(device);
+              connectedDeviceCharacteristic.next(characteristic);
+              connectingFinishedSuccessfully.next();
+              device.onDisconnected(() => {
+                connectedDevice.next(null);
+                deviceHasDisconnected.next();
+              });
+            }),
+            switchMap((_) =>
+              bluetoothManager.requestConnectionPriorityForDevice(
+                device.id,
+                ConnectionPriority.High
+              )
+            ),
+            map((_) => device),
+            catchError((_) => {
+              bluetoothError.next(BluetoothErrorEnum.CONNECTING_ERROR);
+              connectedDevice.next(null);
+              return of(null);
+            })
+          )
+    )
+  );
+};
+
+export const disconnectBluetoothDevice = (
+  deviceId: string | undefined
+): Observable<any> => {
+  if (!deviceId) return of(null);
+  return from(bluetoothManager.devices([deviceId])).pipe(
+    take(1),
+    map((devices) => {
+      if (devices.length > 0) return devices[0];
+      else throw new Error(BluetoothErrorEnum.DISCONNECTING_ERROR);
+    }),
+    switchMap((device) => from(device.cancelConnection())),
+    tap((_) => {
+      connectedDevice.next(null);
+      connectedDeviceCharacteristic.next(null);
+      deviceHasDisconnected.next();
+    }),
+    catchError((_) => {
+      bluetoothError.next(BluetoothErrorEnum.DISCONNECTING_ERROR);
+      return EMPTY;
     })
   );
 };
 
-export const connectDeviceById = (deviceId: string) => {
-  console.log("Connecting device...");
-  return from(
-    bluetoothManager
-      .devices([deviceId])
-      .then((devices) =>
-        devices.length > 0 ? connectDevice(devices[0]) : Promise.reject()
-      )
-  );
-};
-
-const connectDevice = (device: Device) => {
-  return device
-    .isConnected()
-    .then((isConnected) => {
-      if (isConnected) {
-        connectingFinishedSuccessfully.next(true);
-        return device;
-      } else {
-        return device
-          .connect()
-          .then((d) => d.discoverAllServicesAndCharacteristics())
-          .then((d) =>
-            d.readCharacteristicForService(
-              "4fafc201-1fb5-459e-8fcc-c5c9c331914b",
-              "beb5483e-36e1-4688-b7f5-ea07361b26a8"
+export const setupWiredDetectors = (): Observable<boolean> => {
+  return connectedDevice$.pipe(
+    take(1),
+    switchMap((device) =>
+      device && device.id
+        ? getDetectors(AsyncStorage).pipe(
+            switchMap((detectors) =>
+              detectors
+                ? setupUltrasonicDetectors(
+                    detectors[DetectorTypeEnum.ULTRA_SONIC]
+                  ).pipe(
+                    switchMap((_) =>
+                      setupSinglePointLidarDetectors(
+                        detectors[DetectorTypeEnum.SINGLE_POINT_LIDAR]
+                      )
+                    ),
+                    switchMap((_) =>
+                      setupMultiPointLidarDetectors(
+                        detectors[DetectorTypeEnum.MULTI_POINT_LIDAR]
+                      )
+                    ),
+                    map((_) => true),
+                    catchError((_) => {
+                      bluetoothError.next(
+                        BluetoothErrorEnum.DETECTOR_SETUP_ERROR
+                      );
+                      return of(false);
+                    })
+                  )
+                : of(false)
             )
           )
-          .then((characteristic) => {
-            connectedDevice.next(device);
-            connectedDeviceCharacteristic.next(characteristic);
-            connectingFinishedSuccessfully.next(true);
-            device.onDisconnected(() => {
-              connectedDevice.next(null);
-              deviceHasDisconnected.next(true);
-            });
-            return device;
-          })
-          .catch((_) =>
-            bluetoothError.next(BluetoothErrorEnum.CONNECTING_ERROR)
-          );
-      }
-    })
-    .catch((_) => bluetoothError.next(BluetoothErrorEnum.CONNECTING_ERROR));
-};
-
-export const disconnectBluetoothDevice = () => {
-  return from(
-    connectedDevice
-      .getValue()!
-      .cancelConnection()
-      .then(() => {
-        connectedDevice.next(null);
-        connectedDeviceCharacteristic.next(null);
-        deviceHasDisconnected.next(true);
-      })
+        : of(false)
+    )
   );
 };
 
-export const setupWiredDetectors = (detectors: DetectorData[]) => {
-  const ultrasonicDetectors = detectors.filter(
-    (d) => d.type === DetectorTypeEnum.ULTRA_SONIC
-  );
-  const singlePointLidar = detectors.filter(
-    (d) => d.type === DetectorTypeEnum.SINGLE_POINT_LIDAR
-  );
-  const multiPointLidar = detectors.filter(
-    (d) => d.type === DetectorTypeEnum.MULTI_POINT_LIDAR
-  );
-
-  let message = BluetoothMessagesEnum.SET_ULTRASONIC.toString();
-
-  if (ultrasonicDetectors.length) {
-    message += "T:";
-    ultrasonicDetectors.forEach(
-      (detector) => (message += (detector.socketIndex - 1).toString() + ",")
-    );
-  } else {
-    message += "F";
-  }
-
-  console.log("Writing: ", message);
-
-  return from(
-    connectedDeviceCharacteristic.getValue()
-      ? connectedDeviceCharacteristic
-          .getValue()!
-          .writeWithoutResponse(encode(message))
-          .catch((_) => bluetoothError.next(BluetoothErrorEnum.WRITING_ERROR))
-          .then((_) => {
-            let lidarMessage = BluetoothMessagesEnum.SET_LIDAR.toString();
-
-            if (lidarDetectors.length) {
-              lidarMessage += "T";
-            } else {
-              lidarMessage += "F";
-            }
-
-            console.log("Writing LIdar: ", lidarMessage);
-
-            return from(
-              connectedDeviceCharacteristic.getValue()
-                ? connectedDeviceCharacteristic
-                    .getValue()!
-                    .writeWithoutResponse(encode(lidarMessage))
-                    .catch((_) =>
-                      bluetoothError.next(BluetoothErrorEnum.WRITING_ERROR)
-                    )
-                : Promise.reject()
-            );
-          })
-      : Promise.reject()
-  );
-};
-
-const setupUltrasonicDetectors = (ultrasonicDetectors: DetectorData[]) => {
+const setupUltrasonicDetectors = (
+  ultrasonicDetectors: DetectorData[]
+): Observable<BluetoothResponse | null> => {
   const command: BluetoothCommandMessage = {
-    command: BluetoothCommandEnum.ENABLE_ULTRASONIC_DETECTORS,
+    command:
+      ultrasonicDetectors.length > 0
+        ? BluetoothCommandEnum.ENABLE_ULTRASONIC_DETECTORS
+        : BluetoothCommandEnum.DISABLE_ULTRASONIC_DETECTORS,
     detectorCount: ultrasonicDetectors.length,
     socketIndices: ultrasonicDetectors.map((d) => d.socketIndex - 1),
     detectorIds: ultrasonicDetectors.map((d) => d.id),
   };
 
-  const message = encode(JSON.stringify(command));
-
-    return from(
-        connectedDeviceCharacteristic.getValue()
-            ? connectedDeviceCharacteristic
-                .getValue()!
-                .writeWithResponse(message)
-                .catch((_) => bluetoothError.next(BluetoothErrorEnum.WRITING_ERROR))
-                .then((characteristic) => console.log(characteristic!.read()))
+  return sendCommand(command);
 };
 
-export const startMeasurement = () => {
-  connectedDeviceCharacteristic
-    .getValue()
-    ?.writeWithoutResponse(encode(BluetoothMessagesEnum.START.toString()))
-    .then((characteristic) =>
-      interval(200)
+const setupSinglePointLidarDetectors = (
+  singlePointLidarDetectors: DetectorData[]
+): Observable<BluetoothResponse | null> => {
+  if (singlePointLidarDetectors.length === 0) return of(null);
+
+  const command: BluetoothCommandMessage = {
+    command:
+      singlePointLidarDetectors.length > 0
+        ? BluetoothCommandEnum.ENABLE_LUNA
+        : BluetoothCommandEnum.DISABLE_LUNA,
+  };
+
+  return sendCommand(command);
+};
+
+const setupMultiPointLidarDetectors = (
+  multiPointLidarDetectors: DetectorData[]
+): Observable<BluetoothResponse | null> => {
+  const command: BluetoothCommandMessage = {
+    command:
+      multiPointLidarDetectors.length > 0
+        ? BluetoothCommandEnum.ENABLE_LIDAR
+        : BluetoothCommandEnum.DISABLE_LIDAR,
+  };
+
+  return sendCommand(command);
+};
+
+export const startMeasurement = (): Observable<any> => {
+  const command: BluetoothCommandMessage = {
+    command: BluetoothCommandEnum.START_MEASUREMENT,
+  };
+
+  return sendCommand(command).pipe(
+    filter((response) => response.result === CommandResultEnum.SUCCESS),
+    tap((_) => measurementActive.next(true)),
+    switchMap((_) => connectedDeviceCharacteristic$),
+    tap((characteristic) => {
+      measure(characteristic!);
+
+      currentMeasurement$
         .pipe(
           takeUntil(measurementFinished$),
-          finalize(() => stop(characteristic))
+          delay(400),
+
+          switchMap((_) => measure(characteristic!))
         )
-        .subscribe((_) => measure(characteristic))
+        .subscribe();
+    }),
+    switchMap((_) => currentMeasurement$)
+  );
+};
+
+export const stopMeasurement = (): Observable<any> => {
+  if (!measurementActive.getValue()) return of(null);
+
+  measurementFinished.next();
+
+  return sendStopCommand().pipe(
+    take(1),
+    tap((_) => measurementActive.next(false))
+  );
+};
+
+const measure = (
+  characteristic: Characteristic
+): Observable<BluetoothResponse | null> => {
+  from(characteristic.read())
+    .pipe(
+      take(1),
+      filter((c) => c.value !== null),
+      map((c) => decode(c.value)),
+      map((reading) => JSON.parse(reading) as BluetoothResponse),
+      tap((response) => currentMeasurement.next(response)),
+      catchError((_) => {
+        measurementFinished.next();
+        return of(null);
+      })
     )
-    .catch((_) => bluetoothError.next(BluetoothErrorEnum.WRITING_ERROR));
+    .subscribe();
 
   return currentMeasurement$;
 };
 
-export const stopMeasurement = () => {
-  measurementFinished.next(true);
-};
+const sendStopCommand = (): Observable<BluetoothResponse> => {
+  const command: BluetoothCommandMessage = {
+    command: BluetoothCommandEnum.STOP_MEASUREMENT,
+  };
 
-const measure = (characteristic: Characteristic) => {
-  characteristic
-    .read()
-    .then((characteristic) =>
-      currentMeasurement.next(decode(characteristic.value))
+  return sendCommand(command).pipe(
+    tap(
+      (response: BluetoothResponse) =>
+        response.result !== CommandResultEnum.SUCCESS &&
+        bluetoothError.next(BluetoothErrorEnum.STOP_MEASUREMENT_ERROR)
     )
-    .catch((_) => bluetoothError.next(BluetoothErrorEnum.READING_ERROR));
+  );
 };
 
-const stop = (characteristic: Characteristic) => {
-  characteristic
-    .writeWithoutResponse(encode(BluetoothMessagesEnum.STOP.toString()))
-    .catch((_) => bluetoothError.next(BluetoothErrorEnum.WRITING_ERROR));
+const sendCommand = (
+  command: BluetoothCommandMessage
+): Observable<BluetoothResponse> => {
+  if (!connectedDeviceCharacteristic.getValue()) {
+    bluetoothError.next(BluetoothErrorEnum.CONNECTION_ERROR);
+    return of({
+      command: command.command,
+      result: CommandResultEnum.BLUETOOTH_ERROR,
+    });
+  }
+
+  const message = encode(JSON.stringify(command));
+  console.log("Sending command: ", command);
+
+  return from(
+    connectedDeviceCharacteristic.getValue()!.writeWithResponse(message)
+  ).pipe(
+    take(1),
+    tap((_) => console.log("Command sent")),
+    switchMap((characteristic) => characteristic!.read()),
+    map((characteristic) => decode(characteristic!.value)),
+    map((response) => JSON.parse(response) as BluetoothResponse),
+    catchError((_) => {
+      bluetoothError.next(BluetoothErrorEnum.WRITING_ERROR);
+      return of({
+        command: command.command,
+        result: CommandResultEnum.BLUETOOTH_ERROR,
+      });
+    }),
+    tap((response) => console.log("Received response: ", response))
+  );
 };

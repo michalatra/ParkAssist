@@ -1,8 +1,8 @@
 import { Dimensions, StyleSheet } from "react-native";
 import { ColorsEnum } from "../models/enums/ColorsEnum";
 
-const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
+export const windowWidth = Dimensions.get("window").width;
+export const windowHeight = Dimensions.get("window").height;
 
 const instructionFontSize = 13;
 
@@ -1115,5 +1115,22 @@ export const styles = StyleSheet.create({
     color: ColorsEnum.WHITE,
     fontSize: 16,
     fontWeight: "bold",
+  },
+
+  measurementIndicatorContainer: {
+    width: windowWidth,
+    height: windowWidth,
+    position: "relative",
+  },
+
+  measurementIndicator: {
+    width: windowWidth * 0.8,
+    height: windowWidth * 0.8,
+    position: "absolute",
+    top: 0,
+    left: windowWidth * 0.1,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

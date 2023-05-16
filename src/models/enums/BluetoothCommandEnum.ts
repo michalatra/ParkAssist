@@ -7,4 +7,5 @@ export enum BluetoothCommandEnum {
   DISABLE_LUNA = 5,
   ENABLE_ULTRASONIC_DETECTORS = 6,
   DISABLE_ULTRASONIC_DETECTORS = 7,
+  MEASUREMENT = 8,
 }
