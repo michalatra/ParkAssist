@@ -1,4 +1,7 @@
 import { LanguageEnum } from "./LanguageEnum";
+import { ConnectionStatus } from "../models/enums/ConnectionStatus";
+import { DetectorLocationEnum } from "../models/enums/DetectorLocationEnum";
+import { DetectorLocationTypeEnum } from "../models/enums/DetectorLocationTypeEnum";
 
 export type LanguageType = {
   NAVIGATION: {
@@ -67,11 +70,31 @@ export type LanguageType = {
       SINGLE_POINT_LIDAR: string;
       MULTI_POINT_LIDAR: string;
     };
+    LOCATION_IDX: {
+      [DetectorLocationEnum.LEFT]: string;
+      [DetectorLocationEnum.CENTER_LEFT]: string;
+      [DetectorLocationEnum.CENTER_RIGHT]: string;
+      [DetectorLocationEnum.RIGHT]: string;
+    };
+    LOCATION_TYPE_IDX: {
+      [DetectorLocationTypeEnum.FRONT]: string;
+      [DetectorLocationTypeEnum.BACK]: string;
+    };
+    NO_DETECTORS: string;
   };
 
   CONTROLLER: {
     INSTRUCTION: string;
     BEGIN_PARKING: string;
+    DETECTOR_STATUS: string;
+    NOT_CONFIGURED: string;
+    CONNECTION_STATUS: {
+      [ConnectionStatus.CONNECTED]: string;
+      [ConnectionStatus.CONNECTING]: string;
+      [ConnectionStatus.DISCONNECTED]: string;
+    };
+    DISCONNECT: string;
+    REFRESH: string;
   };
 
   SETTINGS: {

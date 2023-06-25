@@ -1,14 +1,9 @@
 import React from "react";
-import {
-  ActivityIndicator,
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "../../../styles/styles";
 import { BluetoothDeviceData } from "../../../models/BluetoothDeviceData";
 import { ConnectionStatus } from "../../../models/enums/ConnectionStatus";
+import useLanguage from "../../../language/LanguageHook";
 
 interface DeviceInfoProps {
   device: BluetoothDeviceData | null;
@@ -18,6 +13,7 @@ interface DeviceInfoProps {
   onDisconnect: () => void;
   onFindNewDevice: () => void;
 }
+
 const DeviceInfo = ({
   device,
   loading,
@@ -26,47 +22,116 @@ const DeviceInfo = ({
   onDisconnect,
   onFindNewDevice,
 }: DeviceInfoProps) => {
+  const LANGUAGE = useLanguage();
+
   return (
     <View style={styles.centeredContainer}>
       <View style={styles.deviceInfoContainer}>
-        <View style={styles.deviceInfoTitleContainer}>
-          <Text style={styles.deviceInfoTitle}>Detectors Status</Text>
+        <View style={styles.deviceInfoHeader}>
+          <View style={styles.deviceInfoHeaderIconContainer}>
+            <Image
+              style={styles.deviceInfoHeaderIcon}
+              source={require("../../../assets/icons/controller.png")}
+            />
+          </View>
+          <View style={styles.deviceInfoTitleContainer}>
+            <Text style={styles.deviceInfoTitle}>
+              {LANGUAGE ? LANGUAGE.CONTROLLER.DETECTOR_STATUS : ""}
+            </Text>
+          </View>
         </View>
-        {loading ? (
-          <ActivityIndicator />
-        ) : device ? (
-          <View style={styles.deviceInfoItemsContainer}>
-            <View style={styles.deviceInfoItem}>
+        <View style={styles.deviceInfoItemsContainer}>
+          <View style={styles.deviceInfoItem}>
+            <View style={styles.deviceInfoItemIconContainer}>
               <Image
                 style={styles.deviceInfoItemIcon}
                 source={require("../../../assets/icons/cpu.png")}
               />
-              <Text style={styles.deviceInfoItemText}>{device.name}</Text>
             </View>
-            <View style={styles.deviceInfoItem}>
+            <Text style={styles.deviceInfoItemText}>
+              {device
+                ? device.name
+                : LANGUAGE
+                ? LANGUAGE.CONTROLLER.NOT_CONFIGURED
+                : ""}
+            </Text>
+          </View>
+          <View style={styles.deviceInfoItem}>
+            <View style={styles.deviceInfoItemIconContainer}>
               <Image
                 style={styles.deviceInfoItemIcon}
                 source={require("../../../assets/icons/status.png")}
               />
-              <Text style={styles.deviceInfoItemText}>{connectionStatus}</Text>
-              {connectionStatus === ConnectionStatus.DISCONNECTED ||
-              connectionStatus === ConnectionStatus.CONNECTING ? (
-                <TouchableOpacity onPress={onConnect}>
-                  <Image
-                    source={require("../../../assets/icons/refresh.png")}
-                    style={styles.deviceInfoRefreshIcon}
-                  />
-                </TouchableOpacity>
-              ) : null}
-              <TouchableOpacity onPress={onDisconnect}>
-                <Image
-                  source={require("../../../assets/icons/trash.png")}
-                  style={styles.deviceInfoRefreshIcon}
-                />
-              </TouchableOpacity>
             </View>
+            <Text style={styles.deviceInfoItemText}>
+              {LANGUAGE
+                ? LANGUAGE.CONTROLLER.CONNECTION_STATUS[
+                    loading ? ConnectionStatus.CONNECTING : connectionStatus
+                  ]
+                : connectionStatus}
+            </Text>
           </View>
-        ) : null}
+        </View>
+        <View style={styles.deviceInfoActions}>
+          <TouchableOpacity
+            style={
+              connectionStatus !== ConnectionStatus.CONNECTED && !loading
+                ? styles.deviceInfoActionContainer
+                : styles.deviceInfoActionContainerDisabled
+            }
+            onPress={onConnect}
+            disabled={
+              connectionStatus === ConnectionStatus.CONNECTED || loading
+            }
+          >
+            <Image
+              source={require("../../../assets/icons/refresh.png")}
+              style={
+                connectionStatus !== ConnectionStatus.CONNECTED && !loading
+                  ? styles.deviceInfoActionIcon
+                  : styles.deviceInfoActionIconDisabled
+              }
+            />
+            <Text
+              style={
+                connectionStatus !== ConnectionStatus.CONNECTED && !loading
+                  ? styles.deviceInfoActionText
+                  : styles.deviceInfoActionTextDisabled
+              }
+            >
+              {LANGUAGE ? LANGUAGE.CONTROLLER.REFRESH : ""}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={
+              connectionStatus === ConnectionStatus.CONNECTED && !loading
+                ? styles.deviceInfoActionContainer
+                : styles.deviceInfoActionContainerDisabled
+            }
+            disabled={
+              connectionStatus !== ConnectionStatus.CONNECTED || loading
+            }
+            onPress={onDisconnect}
+          >
+            <Image
+              source={require("../../../assets/icons/power-off.png")}
+              style={
+                connectionStatus === ConnectionStatus.CONNECTED && !loading
+                  ? styles.deviceInfoActionIcon
+                  : styles.deviceInfoActionIconDisabled
+              }
+            />
+            <Text
+              style={
+                connectionStatus === ConnectionStatus.CONNECTED && !loading
+                  ? styles.deviceInfoActionText
+                  : styles.deviceInfoActionTextDisabled
+              }
+            >
+              {LANGUAGE ? LANGUAGE.CONTROLLER.DISCONNECT : ""}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );

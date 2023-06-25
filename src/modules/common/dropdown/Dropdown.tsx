@@ -23,7 +23,7 @@ const Dropdown = ({
       {isOpened && (
         <View style={styles.dropdownContent}>
           {items.map((item, idx) => (
-            <View style={styles.dropdownItemContainer}>
+            <View key={idx} style={styles.dropdownItemContainer}>
               <DropdownItem item={item} key={idx} />
             </View>
           ))}

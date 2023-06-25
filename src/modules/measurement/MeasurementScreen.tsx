@@ -58,10 +58,8 @@ const MeasurementScreen = ({ navigation }: any) => {
 
   useEffect(() => {
     const subscription = deviceHasDisconnected$.subscribe((disconnected) => {
-      if (disconnected) {
-        toast.show("Device has disconnected");
-        // handleStop();
-      }
+      toast.show("Device has disconnected");
+      handleStop();
     });
 
     return () => subscription.unsubscribe();
@@ -71,7 +69,7 @@ const MeasurementScreen = ({ navigation }: any) => {
     const subscription = bluetoothError$.subscribe((error) => {
       console.log(error);
       toast.show("An unexpected error occurred");
-      // handleStop();
+      handleStop();
     });
 
     return () => subscription.unsubscribe();
@@ -87,7 +85,6 @@ const MeasurementScreen = ({ navigation }: any) => {
     }
 
     setDetectorLocations(locations);
-    console.log(locations);
   };
 
   return (
@@ -100,15 +97,6 @@ const MeasurementScreen = ({ navigation }: any) => {
         showLanguage={false}
       />
       <View style={styles.measurementContainer}>
-        {/*<View style={styles.measurementRowContainer}></View>*/}
-        {/*<Image*/}
-        {/*  style={styles.measurementCarImage}*/}
-        {/*  source={require("../../assets/icons/top_shot.png")}*/}
-        {/*/>*/}
-        {/*<View style={styles.measurementRowContainer}></View>*/}
-        {/*<View style={styles.instructionContainerStandalone}>*/}
-        {/*  <Text>{measurement}</Text>*/}
-        {/*</View>*/}
         <MeasurementIndicator />
       </View>
       <ActionButton

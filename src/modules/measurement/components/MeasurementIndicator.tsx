@@ -2,7 +2,17 @@ import React, { useEffect, useReducer, useState } from "react";
 import Svg, { Circle } from "react-native-svg";
 import { styles, windowWidth } from "../../../styles/styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { filter, map, mergeMap, switchMap, take, takeUntil, tap } from "rxjs";
+import {
+  combineLatest,
+  combineLatestWith,
+  filter,
+  map,
+  mergeMap,
+  switchMap,
+  take,
+  takeUntil,
+  tap,
+} from "rxjs";
 import {
   currentMeasurement$,
   measurementFinished$,
@@ -50,66 +60,87 @@ const getDegree = (locationId: number): number => {
 
 const MeasurementIndicator = () => {
   const [indicators, setIndicators] = useState<IndicatorData[]>([]);
-  const [detectors, setDetectors] = useState<DetectorStorageData>({
-    [DetectorTypeEnum.ULTRA_SONIC]: [],
-    [DetectorTypeEnum.SINGLE_POINT_LIDAR]: [],
-    [DetectorTypeEnum.MULTI_POINT_LIDAR]: [],
-  });
 
   const strokeWidth = 20;
   const radius = (windowWidth * 0.8) / 2 - strokeWidth / 2;
   const innerRadius = radius - strokeWidth / 2;
-  const maxDistance = 200;
+  const maxDistance = 100;
 
   useEffect(() => {
-    getDetectors(AsyncStorage)
-      .pipe(tap((detectors) => handleCreateIndicators(detectors)))
-      .subscribe();
-  }, []);
+    const subscription = getDetectors(AsyncStorage)
+      .pipe(
+        tap((detectors) => handleCreateIndicators(detectors)),
+        combineLatestWith(currentMeasurement$),
+        takeUntil(measurementFinished$),
+        filter(
+          ([detectors, currentMeasurement]) =>
+            !!detectors && !!currentMeasurement
+        )
+      )
+      .subscribe(([detectors, currentMeasurement]) => {
+        setIndicators((indicators) =>
+          handleUpdateIndicators(indicators, currentMeasurement, detectors)
+        );
+      });
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      currentMeasurement$
-        .pipe(take(1), filter(Boolean))
-        .subscribe((currentMeasurement) => {
-          setIndicators((prevState) =>
-            handleUpdateIndicators(prevState, currentMeasurement)
-          );
-        });
-    }, 400);
-
-    measurementFinished$.subscribe(() => {
-      clearInterval(interval);
-    });
-
-    // return () => subscription.unsubscribe();
+    return () => subscription.unsubscribe();
   }, []);
 
   const handleUpdateIndicators = (
     indicators: IndicatorData[],
-    currentMeasurement: BluetoothResponse
+    currentMeasurement: BluetoothResponse,
+    detectors: DetectorStorageData
   ): IndicatorData[] => {
-    console.log(currentMeasurement);
     const updatedIndicators = [...indicators];
 
+    console.log("currentMeasurement", currentMeasurement);
+
     currentMeasurement.ultrasonic?.forEach((detector, idx) => {
+      console.log("detector", detector / maxDistance);
       updatedIndicators[idx].radius = Math.min(detector / maxDistance, 1);
       updatedIndicators[idx].color = detector > 100 ? "green" : "red";
     });
 
     if (currentMeasurement.singlePointLidar) {
+      console.log(
+        "singlePointLidar",
+        detectors[DetectorTypeEnum.ULTRA_SONIC].length
+      );
       updatedIndicators[detectors[DetectorTypeEnum.ULTRA_SONIC].length].radius =
         Math.min(currentMeasurement.singlePointLidar / maxDistance, 1);
       updatedIndicators[detectors[DetectorTypeEnum.ULTRA_SONIC].length].color =
         currentMeasurement.singlePointLidar > 100 ? "green" : "red";
     }
 
+    if (currentMeasurement.multiPointLidar) {
+      console.log(
+        "multiPointLidar",
+        detectors[DetectorTypeEnum.ULTRA_SONIC].length +
+          detectors[DetectorTypeEnum.SINGLE_POINT_LIDAR].length
+      );
+      updatedIndicators[
+        detectors[DetectorTypeEnum.ULTRA_SONIC].length +
+          detectors[DetectorTypeEnum.SINGLE_POINT_LIDAR].length
+      ].radius = Math.min(
+        currentMeasurement.multiPointLidar.reduce(
+          (acc, curr) => acc + curr,
+          0
+        ) /
+          currentMeasurement.multiPointLidar.length /
+          10 /
+          maxDistance,
+        1
+      );
+      // updatedIndicators[detectors[DetectorTypeEnum.ULTRA_SONIC].length].color =
+      //   currentMeasurement.multiPointLidar > 100 ? "green" : "red";
+    }
+
+    console.log("updatedIndicators", updatedIndicators);
+
     return updatedIndicators;
   };
 
   const handleCreateIndicators = (detectorsData: DetectorStorageData) => {
-    setDetectors(detectorsData);
-
     const detectors = [
       ...detectorsData[DetectorTypeEnum.ULTRA_SONIC],
       ...detectorsData[DetectorTypeEnum.SINGLE_POINT_LIDAR],

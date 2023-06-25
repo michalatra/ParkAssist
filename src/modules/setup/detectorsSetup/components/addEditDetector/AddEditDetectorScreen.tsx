@@ -56,11 +56,18 @@ const AddEditDetectorScreen = ({ navigation, route }: any) => {
       setType(detectorData.type!);
       setLocationType(detectorData.locationType!);
       setLocation(detectorData.location!);
-      setSocketIndex(detectorData.socketIndex!);
+      setSocketIndex(
+        detectorData.type === DetectorTypeEnum.ULTRA_SONIC
+          ? detectorData.socketIndex!
+          : 1
+      );
     }
 
     if (baseDetectorType) {
       setType(baseDetectorType);
+      if (baseDetectorType !== DetectorTypeEnum.ULTRA_SONIC) {
+        setSocketIndex(1);
+      }
     }
   }, [detectorData, baseDetectorType]);
 
@@ -429,87 +436,89 @@ const AddEditDetectorScreen = ({ navigation, route }: any) => {
               </TouchableOpacity>
             </View>
           </View>
-          <View style={styles.detectorAddSection}>
-            <View style={styles.detectorAddSectionTitleContainer}>
-              <Text style={styles.detectorAddSectionTitle}>
-                {LANGUAGE ? LANGUAGE.DETECTORS_SETUP.SELECT_SOCKET : ""}
-              </Text>
-            </View>
-            <View style={styles.detectorAddSectionOptions}>
-              <TouchableOpacity
-                style={
-                  !!socketIndex && socketIndex === 1
-                    ? styles.detectorAddSectionOptionActive
-                    : styles.detectorAddSectionOption
-                }
-                onPress={() => handleSelectSocketIndex(1)}
-              >
-                <Text
+          {type === DetectorTypeEnum.ULTRA_SONIC && (
+            <View style={styles.detectorAddSection}>
+              <View style={styles.detectorAddSectionTitleContainer}>
+                <Text style={styles.detectorAddSectionTitle}>
+                  {LANGUAGE ? LANGUAGE.DETECTORS_SETUP.SELECT_SOCKET : ""}
+                </Text>
+              </View>
+              <View style={styles.detectorAddSectionOptions}>
+                <TouchableOpacity
                   style={
                     !!socketIndex && socketIndex === 1
-                      ? styles.detectorAddSectionOptionTextActive
-                      : styles.detectorAddSectionOptionText
+                      ? styles.detectorAddSectionOptionActive
+                      : styles.detectorAddSectionOption
                   }
+                  onPress={() => handleSelectSocketIndex(1)}
                 >
-                  1
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={
-                  !!socketIndex && socketIndex === 2
-                    ? styles.detectorAddSectionOptionActive
-                    : styles.detectorAddSectionOption
-                }
-                onPress={() => handleSelectSocketIndex(2)}
-              >
-                <Text
+                  <Text
+                    style={
+                      !!socketIndex && socketIndex === 1
+                        ? styles.detectorAddSectionOptionTextActive
+                        : styles.detectorAddSectionOptionText
+                    }
+                  >
+                    1
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
                   style={
                     !!socketIndex && socketIndex === 2
-                      ? styles.detectorAddSectionOptionTextActive
-                      : styles.detectorAddSectionOptionText
+                      ? styles.detectorAddSectionOptionActive
+                      : styles.detectorAddSectionOption
                   }
+                  onPress={() => handleSelectSocketIndex(2)}
                 >
-                  2
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={
-                  !!socketIndex && socketIndex === 3
-                    ? styles.detectorAddSectionOptionActive
-                    : styles.detectorAddSectionOption
-                }
-                onPress={() => handleSelectSocketIndex(3)}
-              >
-                <Text
+                  <Text
+                    style={
+                      !!socketIndex && socketIndex === 2
+                        ? styles.detectorAddSectionOptionTextActive
+                        : styles.detectorAddSectionOptionText
+                    }
+                  >
+                    2
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
                   style={
                     !!socketIndex && socketIndex === 3
-                      ? styles.detectorAddSectionOptionTextActive
-                      : styles.detectorAddSectionOptionText
+                      ? styles.detectorAddSectionOptionActive
+                      : styles.detectorAddSectionOption
                   }
+                  onPress={() => handleSelectSocketIndex(3)}
                 >
-                  3
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={
-                  !!socketIndex && socketIndex === 4
-                    ? styles.detectorAddSectionOptionActive
-                    : styles.detectorAddSectionOption
-                }
-                onPress={() => handleSelectSocketIndex(4)}
-              >
-                <Text
+                  <Text
+                    style={
+                      !!socketIndex && socketIndex === 3
+                        ? styles.detectorAddSectionOptionTextActive
+                        : styles.detectorAddSectionOptionText
+                    }
+                  >
+                    3
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
                   style={
                     !!socketIndex && socketIndex === 4
-                      ? styles.detectorAddSectionOptionTextActive
-                      : styles.detectorAddSectionOptionText
+                      ? styles.detectorAddSectionOptionActive
+                      : styles.detectorAddSectionOption
                   }
+                  onPress={() => handleSelectSocketIndex(4)}
                 >
-                  4
-                </Text>
-              </TouchableOpacity>
+                  <Text
+                    style={
+                      !!socketIndex && socketIndex === 4
+                        ? styles.detectorAddSectionOptionTextActive
+                        : styles.detectorAddSectionOptionText
+                    }
+                  >
+                    4
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
+          )}
           <ActionButton
             title={
               LANGUAGE

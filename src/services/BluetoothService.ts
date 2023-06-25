@@ -16,10 +16,8 @@ import {
   from,
   interval,
   map,
-  mergeMap,
   Observable,
   of,
-  repeat,
   retry,
   Subject,
   switchMap,
@@ -75,6 +73,9 @@ export const measurementFinished$ = measurementFinished.asObservable();
 
 const measurementActive = new BehaviorSubject<boolean>(false);
 export const measurementActive$ = measurementActive.asObservable();
+
+const readFinished = new Subject<void>();
+export const readFinished$ = readFinished.asObservable();
 
 const bluetoothError = new Subject<BluetoothErrorEnum>();
 export const bluetoothError$ = bluetoothError.asObservable();
@@ -402,12 +403,11 @@ export const startMeasurement = (): Observable<any> => {
     tap((characteristic) => {
       measure(characteristic!);
 
-      currentMeasurement$
+      readFinished$
         .pipe(
+          tap((_) => console.log("interval")),
           takeUntil(measurementFinished$),
-          delay(400),
-
-          switchMap((_) => measure(characteristic!))
+          tap((_) => measure(characteristic!))
         )
         .subscribe();
     }),
@@ -426,24 +426,46 @@ export const stopMeasurement = (): Observable<any> => {
   );
 };
 
-const measure = (
-  characteristic: Characteristic
-): Observable<BluetoothResponse | null> => {
+const measure = (characteristic: Characteristic): void => {
+  console.log("measure");
+  // characteristic
+  //   .read()
+  //   .then((c) => {
+  //     console.log("read");
+  //     if (c.value !== null) {
+  //       currentMeasurement.next(
+  //         JSON.parse(decode(c.value)) as BluetoothResponse
+  //       );
+  //     }
+  //     readFinished.next();
+  //   })
+  //   .catch((_) => {
+  //     measurementFinished.next();
+  //   });
   from(characteristic.read())
     .pipe(
       take(1),
+      tap((_) => console.log("read")),
       filter((c) => c.value !== null),
       map((c) => decode(c.value)),
-      map((reading) => JSON.parse(reading) as BluetoothResponse),
-      tap((response) => currentMeasurement.next(response)),
+      map((reading) => {
+        try {
+          return JSON.parse(reading) as BluetoothResponse;
+        } catch (e) {
+          return null;
+        }
+      }),
       catchError((_) => {
         measurementFinished.next();
         return of(null);
       })
     )
-    .subscribe();
-
-  return currentMeasurement$;
+    .subscribe((res) => {
+      if (res) {
+        currentMeasurement.next(res);
+      }
+      readFinished.next();
+    });
 };
 
 const sendStopCommand = (): Observable<BluetoothResponse> => {

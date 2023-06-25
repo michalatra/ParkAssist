@@ -4,7 +4,7 @@ import { CommandResultEnum } from "./enums/CommandResultEnum";
 export interface BluetoothResponse {
   command: BluetoothCommandEnum;
   result: CommandResultEnum;
-  multiPointLidar?: number;
+  multiPointLidar?: number[];
   singlePointLidar?: number;
   ultrasonic?: number[];
 }

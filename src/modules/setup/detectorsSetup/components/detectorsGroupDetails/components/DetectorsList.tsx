@@ -2,6 +2,7 @@ import React from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "../../../../../../styles/styles";
 import { DetectorData } from "../../../../../../models/DetectorData";
+import useLanguage from "../../../../../../language/LanguageHook";
 
 interface DetectorsListProps {
   detectors: DetectorData[];
@@ -10,6 +11,8 @@ interface DetectorsListProps {
 }
 
 const DetectorsList = ({ detectors, onEdit, onRemove }: DetectorsListProps) => {
+  const LANGUAGE = useLanguage();
+
   return (
     <ScrollView
       contentContainerStyle={styles.centeredContainer}
@@ -17,7 +20,9 @@ const DetectorsList = ({ detectors, onEdit, onRemove }: DetectorsListProps) => {
     >
       {detectors.length === 0 && (
         <View style={styles.emptyListInfo}>
-          <Text style={styles.emptyListInfoText}>Brak Czujników</Text>
+          <Text style={styles.emptyListInfoText}>
+            {LANGUAGE ? LANGUAGE.DETECTORS_SETUP.NO_DETECTORS : ""}
+          </Text>
         </View>
       )}
       {detectors.map((detector, index) => (
@@ -27,7 +32,18 @@ const DetectorsList = ({ detectors, onEdit, onRemove }: DetectorsListProps) => {
               style={styles.detectorListItemIcon}
               source={require("../../../../../../assets/icons/detector.png")}
             />
-            <Text style={styles.detectorListItemText}>{detector.name}</Text>
+            <View style={styles.detectorListItemStatus}>
+              <Text style={styles.detectorListItemText}>{detector.name}</Text>
+              <Text style={styles.detectorListItemSubtext}>
+                {LANGUAGE
+                  ? LANGUAGE.DETECTORS_SETUP.LOCATION_IDX[detector.location] +
+                    " - " +
+                    LANGUAGE.DETECTORS_SETUP.LOCATION_TYPE_IDX[
+                      detector.locationType
+                    ]
+                  : ""}
+              </Text>
+            </View>
           </View>
           <View style={styles.detectorListItemActions}>
             <TouchableOpacity

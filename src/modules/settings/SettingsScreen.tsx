@@ -48,7 +48,12 @@ const SettingsScreen = ({ navigation }: any) => {
   return (
     <View style={styles.initContainer}>
       <WavyBackground color={ColorsEnum.BACKGROUND_MEDIUM} />
-      <NavBar navigation={navigation} showSettings={false} showHelp={false} />
+      <NavBar
+        navigation={navigation}
+        showSettings={false}
+        showHelp={false}
+        showLanguage={true}
+      />
       <View style={styles.layoutContainer}>
         <View style={styles.instructionContainer}>
           <Text style={styles.instructionText}>
@@ -64,6 +69,7 @@ const SettingsScreen = ({ navigation }: any) => {
               key={section.title}
               sectionData={section}
               onNavigate={onNavigate}
+              icon={require("../../assets/icons/settings.png")}
             />
           ))}
           <Button

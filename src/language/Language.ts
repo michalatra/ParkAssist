@@ -1,6 +1,9 @@
 import { BehaviorSubject } from "rxjs";
 import { LanguageEnum } from "./LanguageEnum";
 import { AppLanguageType, LanguageType } from "./LanguageType";
+import { ConnectionStatus } from "../models/enums/ConnectionStatus";
+import { DetectorLocationEnum } from "../models/enums/DetectorLocationEnum";
+import { DetectorLocationTypeEnum } from "../models/enums/DetectorLocationTypeEnum";
 
 const LANGUAGES: AppLanguageType = {
   PL: {
@@ -64,10 +67,31 @@ const LANGUAGES: AppLanguageType = {
         SINGLE_POINT_LIDAR: "Lidar jednopunktowy",
         MULTI_POINT_LIDAR: "Lidar wielopunktowy",
       },
+
+      LOCATION_IDX: {
+        [DetectorLocationEnum.LEFT]: "Lewy",
+        [DetectorLocationEnum.CENTER_LEFT]: "Lewy Środek",
+        [DetectorLocationEnum.CENTER_RIGHT]: "Prawy Środek",
+        [DetectorLocationEnum.RIGHT]: "Prawy",
+      },
+      LOCATION_TYPE_IDX: {
+        [DetectorLocationTypeEnum.FRONT]: "Przód",
+        [DetectorLocationTypeEnum.BACK]: "Tył",
+      },
+      NO_DETECTORS: "Brak czujników",
     },
     CONTROLLER: {
       INSTRUCTION: "Witaj! Gdzie dziś parkujesz?",
       BEGIN_PARKING: "Rozpocznij parkowanie",
+      DETECTOR_STATUS: "Status kontrolera",
+      NOT_CONFIGURED: "Nie skonfigurowano",
+      CONNECTION_STATUS: {
+        [ConnectionStatus.CONNECTED]: "Połączono",
+        [ConnectionStatus.CONNECTING]: "Łączenie",
+        [ConnectionStatus.DISCONNECTED]: "Rozłączono",
+      },
+      DISCONNECT: "Rozłącz",
+      REFRESH: "Odśwież",
     },
     SETTINGS: {
       INSTRUCTION: "Ustawienia",
@@ -141,10 +165,30 @@ const LANGUAGES: AppLanguageType = {
         SINGLE_POINT_LIDAR: "Single-point Lidar",
         MULTI_POINT_LIDAR: "Multi-point Lidar",
       },
+      LOCATION_IDX: {
+        [DetectorLocationEnum.LEFT]: "Left",
+        [DetectorLocationEnum.CENTER_LEFT]: "Center left",
+        [DetectorLocationEnum.CENTER_RIGHT]: "Center right",
+        [DetectorLocationEnum.RIGHT]: "Right",
+      },
+      LOCATION_TYPE_IDX: {
+        [DetectorLocationTypeEnum.FRONT]: "Front",
+        [DetectorLocationTypeEnum.BACK]: "Back",
+      },
+      NO_DETECTORS: "No detectors",
     },
     CONTROLLER: {
       INSTRUCTION: "Welcome! Where are you parking today?",
       BEGIN_PARKING: "Begin parking",
+      DETECTOR_STATUS: "Controller status",
+      NOT_CONFIGURED: "Not configured",
+      CONNECTION_STATUS: {
+        [ConnectionStatus.CONNECTED]: "Connected",
+        [ConnectionStatus.CONNECTING]: "Connecting",
+        [ConnectionStatus.DISCONNECTED]: "Disconnected",
+      },
+      DISCONNECT: "Disconnect",
+      REFRESH: "Refresh",
     },
     SETTINGS: {
       INSTRUCTION: "Settings",
