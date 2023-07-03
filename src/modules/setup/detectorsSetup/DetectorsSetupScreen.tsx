@@ -12,7 +12,7 @@ import { DetectorData } from "../../../models/DetectorData";
 import { ScreenNamesEnum } from "../../../models/enums/ScreenNamesEnum";
 import { getDetectors } from "../../../services/DetectorsService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { filter, first, map, take } from "rxjs";
+import { filter, first, take } from "rxjs";
 import { setupWiredDetectors } from "../../../services/BluetoothService";
 
 const DetectorsSetupScreen = ({ navigation, route }: any) => {

@@ -1,6 +1,5 @@
 import React from "react";
 import { ScrollView, Text, View } from "react-native";
-import Navigation from "../common/Navigation";
 import { styles } from "../../styles/styles";
 import { SettingsTileIconEnum } from "../../models/enums/SettingsTileIconEnum";
 import { ScreenNamesEnum } from "../../models/enums/ScreenNamesEnum";
@@ -9,10 +8,12 @@ import SettingsSection from "./components/SettingsSection";
 import Button from "../common/Button";
 import { ColorsEnum } from "../../models/enums/ColorsEnum";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useToast } from "react-native-toast-notifications";
 import NavBar from "../common/NavBar";
 import WavyBackground from "../common/WavyBackground";
 import useLanguage from "../../language/LanguageHook";
+import { showToast } from "../../services/ToastService";
+import { ToastType } from "../../models/enums/ToastType";
+import { NotificationEnum } from "../../models/enums/NotificationEnum";
 
 const sections: SettingsSectionData[] = [
   {
@@ -33,14 +34,13 @@ const sections: SettingsSectionData[] = [
 ];
 const SettingsScreen = ({ navigation }: any) => {
   const LANGUAGE = useLanguage();
-  const toast = useToast();
   const onNavigate = (screenName: ScreenNamesEnum) => {
     navigation.navigate(screenName, { returnScreen: ScreenNamesEnum.SETTINGS });
   };
 
   const handleResetApplication = () => {
     AsyncStorage.clear().then(() => {
-      toast.show("Cache cleared", { type: "success" });
+      showToast(NotificationEnum.CACHE_CLEARED, ToastType.SUCCESS);
       navigation.navigate(ScreenNamesEnum.INITIAL);
     });
   };

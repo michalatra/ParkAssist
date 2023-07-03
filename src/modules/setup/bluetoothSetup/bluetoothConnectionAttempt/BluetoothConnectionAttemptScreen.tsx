@@ -11,11 +11,14 @@ import { saveValue } from "../../../../services/StorageService";
 import { StorageKeysEnum } from "../../../../models/enums/StorageKeysEnum";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ScreenNamesEnum } from "../../../../models/enums/ScreenNamesEnum";
-import { useToast } from "react-native-toast-notifications";
 import NavBar from "../../../common/NavBar";
 import useLanguage from "../../../../language/LanguageHook";
 import WavyBackground from "../../../common/WavyBackground";
 import { ColorsEnum } from "../../../../models/enums/ColorsEnum";
+import { showToast } from "../../../../services/ToastService";
+import { NotificationEnum } from "../../../../models/enums/NotificationEnum";
+import { ToastType } from "../../../../models/enums/ToastType";
+import { ErrorEnum } from "../../../../models/enums/ErrorEnum";
 
 const BluetoothConnectionAttemptScreen = ({ navigation, route }: any) => {
   const deviceId: string = route.params.deviceId;
@@ -24,8 +27,6 @@ const BluetoothConnectionAttemptScreen = ({ navigation, route }: any) => {
     : ScreenNamesEnum.CONTROLLER;
 
   const LANGUAGE = useLanguage();
-
-  const toast = useToast();
 
   const onConnect = () => {
     connectedDevice$
@@ -39,7 +40,7 @@ const BluetoothConnectionAttemptScreen = ({ navigation, route }: any) => {
         )
       )
       .subscribe((_) => {
-        toast.show("Connected successfully", { type: "success" });
+        showToast(NotificationEnum.CONNECTED_SUCCESSFULLY, ToastType.SUCCESS);
         navigation.reset({
           index: 0,
           routes: [
@@ -54,7 +55,7 @@ const BluetoothConnectionAttemptScreen = ({ navigation, route }: any) => {
     const subscription = connectDeviceById(deviceId)
       .pipe(
         catchError((_) => {
-          toast.show("Connection failed", { type: "error" });
+          showToast(ErrorEnum.CONNECTING_FAILED, ToastType.DANGER);
           navigation.goBack();
           return empty();
         })
@@ -75,7 +76,12 @@ const BluetoothConnectionAttemptScreen = ({ navigation, route }: any) => {
   return (
     <View style={styles.initContainer}>
       <WavyBackground color={ColorsEnum.BACKGROUND_MEDIUM} />
-      <NavBar navigation={navigation} showSettings={false} showHelp={false} />
+      <NavBar
+        navigation={navigation}
+        showSettings={false}
+        showHelp={false}
+        showLanguage={false}
+      />
       <View style={styles.layoutContainer}>
         <View style={styles.instructionContainer}>
           <Text style={styles.instructionText}>

@@ -14,7 +14,6 @@ import {
   EMPTY,
   filter,
   from,
-  interval,
   map,
   Observable,
   of,
@@ -38,6 +37,9 @@ import { readValue } from "./StorageService";
 import { StorageKeysEnum } from "../models/enums/StorageKeysEnum";
 import { BluetoothDeviceData } from "../models/BluetoothDeviceData";
 import { getDetectors } from "./DetectorsService";
+import { showToast } from "./ToastService";
+import { ToastType } from "../models/enums/ToastType";
+import { ErrorEnum } from "../models/enums/ErrorEnum";
 
 const bluetoothManager = new BleManager();
 
@@ -100,6 +102,7 @@ export const initializeBluetooth = (): Observable<any> => {
     catchError((error) => {
       console.log("Error while initializing bluetooth: ", error);
       bluetoothInitialized.next(false);
+      showToast(ErrorEnum.BLUETOOTH_INIT_ERROR, ToastType.DANGER);
       return of(null);
     })
   );
@@ -112,6 +115,7 @@ const restoreSavedDevice = (): Observable<Device | null> => {
         ? connectDeviceById(device.id).pipe(
             retry({ count: 5, delay: 3000 }),
             catchError((error) => {
+              showToast(ErrorEnum.CONNECTION_ATTEMPT_ERROR, ToastType.DANGER);
               console.log("Error while connecting to saved device: ", error);
               return of(null);
             })
@@ -141,7 +145,6 @@ const isValid = (device: Device): boolean => {
 };
 
 const scan = () => {
-  console.log("Scanning...");
   bluetoothManager.startDeviceScan(null, null, (error, device) => {
     if (error) return bluetoothError.next(BluetoothErrorEnum.SCAN_ERROR);
 
@@ -167,8 +170,6 @@ export const scanBluetoothDevices = (
 };
 
 const requestLocationPermission = (): Observable<boolean> => {
-  console.log("Requesting location permission...");
-
   if (Platform.OS === "android" && Platform.Version >= 23) {
     return from(
       PermissionsAndroid.check(
@@ -333,6 +334,10 @@ export const setupWiredDetectors = (): Observable<boolean> => {
                     ),
                     map((_) => true),
                     catchError((_) => {
+                      showToast(
+                        BluetoothErrorEnum.DETECTOR_SETUP_ERROR,
+                        ToastType.DANGER
+                      );
                       bluetoothError.next(
                         BluetoothErrorEnum.DETECTOR_SETUP_ERROR
                       );
@@ -360,7 +365,7 @@ const setupUltrasonicDetectors = (
     detectorIds: ultrasonicDetectors.map((d) => d.id),
   };
 
-  return sendCommand(command);
+  return sendCommand(command, BluetoothErrorEnum.ULTRASONIC_SETUP_ERROR);
 };
 
 const setupSinglePointLidarDetectors = (
@@ -375,7 +380,7 @@ const setupSinglePointLidarDetectors = (
         : BluetoothCommandEnum.DISABLE_LUNA,
   };
 
-  return sendCommand(command);
+  return sendCommand(command, BluetoothErrorEnum.LUNA_SETUP_ERROR);
 };
 
 const setupMultiPointLidarDetectors = (
@@ -388,7 +393,7 @@ const setupMultiPointLidarDetectors = (
         : BluetoothCommandEnum.DISABLE_LIDAR,
   };
 
-  return sendCommand(command);
+  return sendCommand(command, BluetoothErrorEnum.LIDAR_SETUP_ERROR);
 };
 
 export const startMeasurement = (): Observable<any> => {
@@ -396,8 +401,11 @@ export const startMeasurement = (): Observable<any> => {
     command: BluetoothCommandEnum.START_MEASUREMENT,
   };
 
-  return sendCommand(command).pipe(
-    filter((response) => response.result === CommandResultEnum.SUCCESS),
+  return sendCommand(command, BluetoothErrorEnum.START_MEASUREMENT_ERROR).pipe(
+    filter(
+      (response) =>
+        response !== null && response.result === CommandResultEnum.SUCCESS
+    ),
     tap((_) => measurementActive.next(true)),
     switchMap((_) => connectedDeviceCharacteristic$),
     tap((characteristic) => {
@@ -405,7 +413,6 @@ export const startMeasurement = (): Observable<any> => {
 
       readFinished$
         .pipe(
-          tap((_) => console.log("interval")),
           takeUntil(measurementFinished$),
           tap((_) => measure(characteristic!))
         )
@@ -427,25 +434,9 @@ export const stopMeasurement = (): Observable<any> => {
 };
 
 const measure = (characteristic: Characteristic): void => {
-  console.log("measure");
-  // characteristic
-  //   .read()
-  //   .then((c) => {
-  //     console.log("read");
-  //     if (c.value !== null) {
-  //       currentMeasurement.next(
-  //         JSON.parse(decode(c.value)) as BluetoothResponse
-  //       );
-  //     }
-  //     readFinished.next();
-  //   })
-  //   .catch((_) => {
-  //     measurementFinished.next();
-  //   });
   from(characteristic.read())
     .pipe(
       take(1),
-      tap((_) => console.log("read")),
       filter((c) => c.value !== null),
       map((c) => decode(c.value)),
       map((reading) => {
@@ -468,24 +459,20 @@ const measure = (characteristic: Characteristic): void => {
     });
 };
 
-const sendStopCommand = (): Observable<BluetoothResponse> => {
+const sendStopCommand = (): Observable<BluetoothResponse | null> => {
   const command: BluetoothCommandMessage = {
     command: BluetoothCommandEnum.STOP_MEASUREMENT,
   };
 
-  return sendCommand(command).pipe(
-    tap(
-      (response: BluetoothResponse) =>
-        response.result !== CommandResultEnum.SUCCESS &&
-        bluetoothError.next(BluetoothErrorEnum.STOP_MEASUREMENT_ERROR)
-    )
-  );
+  return sendCommand(command, BluetoothErrorEnum.STOP_MEASUREMENT_ERROR);
 };
 
 const sendCommand = (
-  command: BluetoothCommandMessage
-): Observable<BluetoothResponse> => {
+  command: BluetoothCommandMessage,
+  error: BluetoothErrorEnum
+): Observable<BluetoothResponse | null> => {
   if (!connectedDeviceCharacteristic.getValue()) {
+    showToast(BluetoothErrorEnum.CONNECTION_ERROR, ToastType.DANGER);
     bluetoothError.next(BluetoothErrorEnum.CONNECTION_ERROR);
     return of({
       command: command.command,
@@ -495,22 +482,37 @@ const sendCommand = (
 
   const message = encode(JSON.stringify(command));
   console.log("Sending command: ", command);
-
   return from(
     connectedDeviceCharacteristic.getValue()!.writeWithResponse(message)
   ).pipe(
     take(1),
-    tap((_) => console.log("Command sent")),
     switchMap((characteristic) => characteristic!.read()),
     map((characteristic) => decode(characteristic!.value)),
-    map((response) => JSON.parse(response) as BluetoothResponse),
+    map((response) => {
+      try {
+        return JSON.parse(response) as BluetoothResponse;
+      } catch (e) {
+        return null;
+      }
+    }),
+    tap((response) => {
+      console.log("Response: ", response);
+      if (
+        response &&
+        response.result !== CommandResultEnum.SUCCESS &&
+        response.result !== CommandResultEnum.ACTION_NOT_NECESSARY
+      ) {
+        showToast(response.result, ToastType.DANGER);
+        bluetoothError.next(error);
+      }
+    }),
     catchError((_) => {
+      showToast(BluetoothErrorEnum.WRITING_ERROR, ToastType.DANGER);
       bluetoothError.next(BluetoothErrorEnum.WRITING_ERROR);
       return of({
         command: command.command,
         result: CommandResultEnum.BLUETOOTH_ERROR,
       });
-    }),
-    tap((response) => console.log("Received response: ", response))
+    })
   );
 };

@@ -13,7 +13,6 @@ const InitialLoadingScreen = ({ navigation }: any) => {
       AsyncStorage,
       StorageKeysEnum.APP_INITIALIZED
     ).subscribe((initialized) => {
-      // navigation.replace(ScreenNamesEnum.INITIAL);
       !!initialized && initialized == true
         ? navigation.replace(ScreenNamesEnum.CONTROLLER)
         : navigation.replace(ScreenNamesEnum.INITIAL);

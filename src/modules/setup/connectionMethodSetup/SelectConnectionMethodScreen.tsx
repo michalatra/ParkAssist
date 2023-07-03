@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Image, TouchableOpacity, View, Text } from "react-native";
 import { styles } from "../../../styles/styles";
-import { useToast } from "react-native-toast-notifications";
 import { ScreenNamesEnum } from "../../../models/enums/ScreenNamesEnum";
 import NavBar from "../../common/NavBar";
 import WavyBackground from "../../common/WavyBackground";
@@ -9,12 +8,14 @@ import { ColorsEnum } from "../../../models/enums/ColorsEnum";
 import { ConnectionMethodEnum } from "../../../models/enums/ConnectionMethodEnum";
 import ActionButton from "../../common/ActionButton";
 import useLanguage from "../../../language/LanguageHook";
+import { showToast } from "../../../services/ToastService";
+import { ErrorEnum } from "../../../models/enums/ErrorEnum";
+import { ToastType } from "../../../models/enums/ToastType";
 
 const SelectConnectionMethodScreen = ({ navigation }: any) => {
   const LANGUAGE = useLanguage();
   const [connectionMethod, setConnectionMethod] =
     useState<ConnectionMethodEnum | null>(null);
-  const toast = useToast();
 
   const onSelect = (method: ConnectionMethodEnum) => {
     setConnectionMethod(method);
@@ -38,7 +39,7 @@ const SelectConnectionMethodScreen = ({ navigation }: any) => {
 
   const onWiFiSelect = () => {
     //TODO: WiFi connection
-    toast.show("WiFi connection is not implemented yet.");
+    showToast(ErrorEnum.WIFI_NOT_IMPLEMENTED, ToastType.DANGER);
   };
 
   return (

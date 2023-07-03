@@ -35,7 +35,6 @@ const App = () => {
         <NavigationContainer>
           <NavigationStack.Navigator
             initialRouteName={ScreenNamesEnum.INITIAL_LOADING}
-            // detachInactiveScreens={true}
             screenOptions={{
               headerShown: false,
             }}

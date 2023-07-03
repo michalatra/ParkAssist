@@ -12,4 +12,7 @@ export enum BluetoothErrorEnum {
   START_MEASUREMENT_ERROR = "startMeasurementError",
   DETECTOR_SETUP_ERROR = "detectorSetupError",
   MEASUREMENT_ERROR = "measurementError",
+  LIDAR_SETUP_ERROR = "lidarSetupError",
+  LUNA_SETUP_ERROR = "lunaSetupError",
+  ULTRASONIC_SETUP_ERROR = "ultrasonicSetupError",
 }

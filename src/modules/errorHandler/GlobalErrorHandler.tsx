@@ -3,8 +3,13 @@ import CustomModal from "../common/modals/CustomModal";
 import { ModalTypeEnum } from "../../models/enums/ModalTypeEnum";
 import { errorStream$ } from "../../services/ErrorService";
 import { ModalButtonTypeEnum } from "../../models/enums/ModalButtonTypeEnum";
+import { useToast } from "react-native-toast-notifications";
+import { toastStream$ } from "../../services/ToastService";
+import useLanguage from "../../language/LanguageHook";
 
 const GlobalErrorHandler = ({ children }: any) => {
+  const LANGUAGE = useLanguage();
+  const toast = useToast();
   const [errorVisibility, setErrorVisibility] = useState(false);
   const [errorTitle, setErrorTitle] = useState("");
   const [errorDescription, setErrorDescription] = useState("");
@@ -21,8 +26,22 @@ const GlobalErrorHandler = ({ children }: any) => {
     return () => subscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    const subscription = toastStream$.subscribe((toastData) => {
+      // @ts-ignore
+      toast.show(
+        LANGUAGE ? LANGUAGE.TOAST[toastData.type]![toastData.message]! : "",
+        {
+          type: toastData.type,
+        }
+      );
+
+      console.log(toastData);
+    });
+    return () => subscription.unsubscribe();
+  }, [toast]);
+
   const onClose = () => {
-    // if (!!errorAction) errorAction();
     setErrorVisibility(false);
   };
 

@@ -2,6 +2,11 @@ import { LanguageEnum } from "./LanguageEnum";
 import { ConnectionStatus } from "../models/enums/ConnectionStatus";
 import { DetectorLocationEnum } from "../models/enums/DetectorLocationEnum";
 import { DetectorLocationTypeEnum } from "../models/enums/DetectorLocationTypeEnum";
+import { ToastType } from "../models/enums/ToastType";
+import { ErrorEnum } from "../models/enums/ErrorEnum";
+import { BluetoothErrorEnum } from "../models/enums/BluetoothErrorEnum";
+import { CommandResultEnum } from "../models/enums/CommandResultEnum";
+import { NotificationEnum } from "../models/enums/NotificationEnum";
 
 export type LanguageType = {
   NAVIGATION: {
@@ -107,6 +112,55 @@ export type LanguageType = {
 
   MEASUREMENT: {
     STOP_MEASUREMENT: string;
+  };
+
+  TOAST: {
+    [ToastType.SUCCESS]: {
+      [NotificationEnum.CACHE_CLEARED]: string;
+      [NotificationEnum.CONNECTED_SUCCESSFULLY]: string;
+    };
+    [ToastType.DANGER]: {
+      [ErrorEnum.BLUETOOTH_INIT_ERROR]: string;
+      [ErrorEnum.CONNECTION_ATTEMPT_ERROR]: string;
+      [ErrorEnum.DEVICE_NOT_CONNECTED]: string;
+      [ErrorEnum.WIFI_NOT_IMPLEMENTED]: string;
+      [ErrorEnum.DEVICE_HAS_DISCONNECTED]: string;
+      [ErrorEnum.CONNECTING_FAILED]: string;
+      [BluetoothErrorEnum.SCAN_ERROR]: string;
+      [BluetoothErrorEnum.NOT_INITIALIZED_ERROR]: string;
+      [BluetoothErrorEnum.PERMISSION_ERROR]: string;
+      [BluetoothErrorEnum.POWER_ON_ERROR]: string;
+      [BluetoothErrorEnum.WRITING_ERROR]: string;
+      [BluetoothErrorEnum.READING_ERROR]: string;
+      [BluetoothErrorEnum.CONNECTING_ERROR]: string;
+      [BluetoothErrorEnum.CONNECTION_ERROR]: string;
+      [BluetoothErrorEnum.DISCONNECTING_ERROR]: string;
+      [BluetoothErrorEnum.STOP_MEASUREMENT_ERROR]: string;
+      [BluetoothErrorEnum.START_MEASUREMENT_ERROR]: string;
+      [BluetoothErrorEnum.DETECTOR_SETUP_ERROR]: string;
+      [BluetoothErrorEnum.MEASUREMENT_ERROR]: string;
+      [BluetoothErrorEnum.LIDAR_SETUP_ERROR]: string;
+      [BluetoothErrorEnum.LUNA_SETUP_ERROR]: string;
+      [BluetoothErrorEnum.ULTRASONIC_SETUP_ERROR]: string;
+      [CommandResultEnum.ERROR]: string;
+      [CommandResultEnum.ACTION_NOT_NECESSARY]: string;
+      [CommandResultEnum.I2C_ERROR]: string;
+      [CommandResultEnum.LIDAR_ERROR]: string;
+      [CommandResultEnum.LIDAR_RESOLUTION_ERROR]: string;
+      [CommandResultEnum.LIDAR_RANGING_MODE_ERROR]: string;
+      [CommandResultEnum.LIDAR_POWER_MODE_ERROR]: string;
+      [CommandResultEnum.LIDAR_INTEGRATION_TIME_ERROR]: string;
+      [CommandResultEnum.LIDAR_SHARPENER_ERROR]: string;
+      [CommandResultEnum.LIDAR_TARGET_ORDER_ERROR]: string;
+      [CommandResultEnum.LIDAR_RANGING_ERROR]: string;
+      [CommandResultEnum.LIDAR_MEASUREMENT_ERROR]: string;
+      [CommandResultEnum.LUNA_MEASUREMENT_ERROR]: string;
+      [CommandResultEnum.NO_DETECTORS_CONFIGURED_ERROR]: string;
+      [CommandResultEnum.BLUETOOTH_ERROR]: string;
+    };
+    [ToastType.WARNING]: {
+      DEVICE_DISCONNECTED: string;
+    };
   };
 };
 

@@ -21,10 +21,7 @@ import { BluetoothResponse } from "../../../models/BluetoothResponse";
 import { IndicatorData } from "../../../models/IndicatorData";
 import { DetectorStorageData } from "../../../models/DetectorStorageData";
 import { DetectorTypeEnum } from "../../../models/enums/DetectorTypeEnum";
-import {
-  getDetectors,
-  updateDetectors,
-} from "../../../services/DetectorsService";
+import { getDetectors } from "../../../services/DetectorsService";
 import { View } from "react-native";
 
 const getDegree = (locationId: number): number => {
@@ -93,8 +90,6 @@ const MeasurementIndicator = () => {
   ): IndicatorData[] => {
     const updatedIndicators = [...indicators];
 
-    console.log("currentMeasurement", currentMeasurement);
-
     currentMeasurement.ultrasonic?.forEach((detector, idx) => {
       console.log("detector", detector / maxDistance);
       updatedIndicators[idx].radius = Math.min(detector / maxDistance, 1);
@@ -102,10 +97,6 @@ const MeasurementIndicator = () => {
     });
 
     if (currentMeasurement.singlePointLidar) {
-      console.log(
-        "singlePointLidar",
-        detectors[DetectorTypeEnum.ULTRA_SONIC].length
-      );
       updatedIndicators[detectors[DetectorTypeEnum.ULTRA_SONIC].length].radius =
         Math.min(currentMeasurement.singlePointLidar / maxDistance, 1);
       updatedIndicators[detectors[DetectorTypeEnum.ULTRA_SONIC].length].color =
@@ -113,11 +104,6 @@ const MeasurementIndicator = () => {
     }
 
     if (currentMeasurement.multiPointLidar) {
-      console.log(
-        "multiPointLidar",
-        detectors[DetectorTypeEnum.ULTRA_SONIC].length +
-          detectors[DetectorTypeEnum.SINGLE_POINT_LIDAR].length
-      );
       updatedIndicators[
         detectors[DetectorTypeEnum.ULTRA_SONIC].length +
           detectors[DetectorTypeEnum.SINGLE_POINT_LIDAR].length

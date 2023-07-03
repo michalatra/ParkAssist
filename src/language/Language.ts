@@ -4,6 +4,11 @@ import { AppLanguageType, LanguageType } from "./LanguageType";
 import { ConnectionStatus } from "../models/enums/ConnectionStatus";
 import { DetectorLocationEnum } from "../models/enums/DetectorLocationEnum";
 import { DetectorLocationTypeEnum } from "../models/enums/DetectorLocationTypeEnum";
+import { ToastType } from "../models/enums/ToastType";
+import { ErrorEnum } from "../models/enums/ErrorEnum";
+import { BluetoothErrorEnum } from "../models/enums/BluetoothErrorEnum";
+import { CommandResultEnum } from "../models/enums/CommandResultEnum";
+import { NotificationEnum } from "../models/enums/NotificationEnum";
 
 const LANGUAGES: AppLanguageType = {
   PL: {
@@ -103,6 +108,75 @@ const LANGUAGES: AppLanguageType = {
     MEASUREMENT: {
       STOP_MEASUREMENT: "Zakończ pomiar",
     },
+    TOAST: {
+      [ToastType.SUCCESS]: {
+        [NotificationEnum.CACHE_CLEARED]: "Pamięć podręczna wyczyszczona",
+        [NotificationEnum.CONNECTED_SUCCESSFULLY]: "Połączono pomyślnie",
+      },
+      [ToastType.DANGER]: {
+        [ErrorEnum.BLUETOOTH_INIT_ERROR]:
+          "Wystąpił błąd podczas inicjalizacji Bluetooth",
+        [ErrorEnum.CONNECTION_ATTEMPT_ERROR]:
+          "Wystąpił błąd podczas próby połączenia",
+        [ErrorEnum.DEVICE_NOT_CONNECTED]: "Urządzenie nie jest połączone",
+        [ErrorEnum.WIFI_NOT_IMPLEMENTED]:
+          "Połączenie WiFi nie jest jeszcze zaimplementowane",
+        [ErrorEnum.DEVICE_HAS_DISCONNECTED]: "Urządzenie zostało rozłączone",
+        [ErrorEnum.CONNECTING_FAILED]: "Nie udało się połączyć",
+        [BluetoothErrorEnum.SCAN_ERROR]: "Wystąpił błąd podczas skanowania",
+        [BluetoothErrorEnum.NOT_INITIALIZED_ERROR]:
+          "Bluetooth nie jest zainicjalizowany",
+        [BluetoothErrorEnum.PERMISSION_ERROR]: "Brak uprawnień do Bluetooth",
+        [BluetoothErrorEnum.POWER_ON_ERROR]:
+          "Wystąpił błąd podczas włączania Bluetooth",
+        [BluetoothErrorEnum.WRITING_ERROR]:
+          "Wystąpił błąd podczas wysyłania danych",
+        [BluetoothErrorEnum.READING_ERROR]:
+          "Wystąpił błąd podczas odczytywania danych",
+        [BluetoothErrorEnum.CONNECTING_ERROR]: "Wystąpił błąd podczas łączenia",
+        [BluetoothErrorEnum.CONNECTION_ERROR]: "Wystąpił błąd połączenia",
+        [BluetoothErrorEnum.DISCONNECTING_ERROR]:
+          "Wystąpił błąd podczas rozłączania",
+        [BluetoothErrorEnum.STOP_MEASUREMENT_ERROR]:
+          "Nie można zakończyć pomiaru",
+        [BluetoothErrorEnum.START_MEASUREMENT_ERROR]:
+          "Nie można rozpocząć pomiaru",
+        [BluetoothErrorEnum.DETECTOR_SETUP_ERROR]:
+          "Nie można skonfigurować czujników",
+        [BluetoothErrorEnum.MEASUREMENT_ERROR]: "Wystąpił błąd podczas pomiaru",
+        [BluetoothErrorEnum.LIDAR_SETUP_ERROR]:
+          "Nie można skonfigurować lidaru",
+        [BluetoothErrorEnum.LUNA_SETUP_ERROR]: "Nie można skonfigurować luny",
+        [BluetoothErrorEnum.ULTRASONIC_SETUP_ERROR]:
+          "Nie można skonfigurować czujników ultradźwiękowych",
+
+        [CommandResultEnum.ERROR]: "Wystąpił błąd",
+        [CommandResultEnum.ACTION_NOT_NECESSARY]: "Operacja nie jest konieczna",
+        [CommandResultEnum.I2C_ERROR]: "Wykryto błąd I2C",
+        [CommandResultEnum.LIDAR_ERROR]: "Wykryto błąd lidaru",
+        [CommandResultEnum.LIDAR_RESOLUTION_ERROR]:
+          "Wykryto błąd ustawienia rozdzielczości",
+        [CommandResultEnum.LIDAR_RANGING_MODE_ERROR]:
+          "Wykryto błąd ustawienia trybu pomiaru",
+        [CommandResultEnum.LIDAR_POWER_MODE_ERROR]:
+          "Wykryto błąd ustawienia trybu zasilania",
+        [CommandResultEnum.LIDAR_INTEGRATION_TIME_ERROR]:
+          "Wykryto błąd ustawienia czasu integracji",
+        [CommandResultEnum.LIDAR_SHARPENER_ERROR]:
+          "Wykryto błąd ustawienia ostrości",
+        [CommandResultEnum.LIDAR_TARGET_ORDER_ERROR]:
+          "Wykryto błąd ustawienia kolejności celu",
+        [CommandResultEnum.LIDAR_RANGING_ERROR]: "Wykryto błąd pomiaru",
+        [CommandResultEnum.LIDAR_MEASUREMENT_ERROR]: "Wykryto błąd pomiaru",
+        [CommandResultEnum.LUNA_MEASUREMENT_ERROR]: "Wykryto błąd pomiaru",
+        [CommandResultEnum.NO_DETECTORS_CONFIGURED_ERROR]:
+          "Wykryto błąd konfiguracji czujników",
+        [CommandResultEnum.BLUETOOTH_ERROR]: "Wykryto błąd Bluetooth",
+      },
+      [ToastType.WARNING]: {
+        DEVICE_DISCONNECTED: "Urządzenie zostało rozłączone",
+      },
+    },
   },
   EN: {
     NAVIGATION: {
@@ -199,6 +273,75 @@ const LANGUAGES: AppLanguageType = {
     },
     MEASUREMENT: {
       STOP_MEASUREMENT: "Stop measurement",
+    },
+    TOAST: {
+      [ToastType.SUCCESS]: {
+        [NotificationEnum.CACHE_CLEARED]: "Cache has been cleared",
+        [NotificationEnum.CONNECTED_SUCCESSFULLY]: "Connected successfully",
+      },
+      [ToastType.DANGER]: {
+        [ErrorEnum.BLUETOOTH_INIT_ERROR]:
+          "Bluetooth initialization error occurred",
+        [ErrorEnum.CONNECTION_ATTEMPT_ERROR]:
+          "Connection attempt error occurred",
+        [ErrorEnum.DEVICE_NOT_CONNECTED]: "Device is not connected",
+        [ErrorEnum.WIFI_NOT_IMPLEMENTED]: "WiFi connection is not implemented",
+        [ErrorEnum.DEVICE_HAS_DISCONNECTED]: "Device has disconnected",
+        [ErrorEnum.CONNECTING_FAILED]: "Connecting has failed",
+        [BluetoothErrorEnum.SCAN_ERROR]: "Scan error occurred",
+        [BluetoothErrorEnum.NOT_INITIALIZED_ERROR]: "Bluetooth not initialized",
+        [BluetoothErrorEnum.PERMISSION_ERROR]: "Permission error occurred",
+        [BluetoothErrorEnum.POWER_ON_ERROR]:
+          "An error occurred while turning on Bluetooth",
+        [BluetoothErrorEnum.WRITING_ERROR]:
+          "An error occurred while sending data",
+        [BluetoothErrorEnum.READING_ERROR]:
+          "An error occurred while reading data",
+        [BluetoothErrorEnum.CONNECTING_ERROR]:
+          "An error occurred while connecting",
+        [BluetoothErrorEnum.CONNECTION_ERROR]: "Connection failed",
+        [BluetoothErrorEnum.DISCONNECTING_ERROR]:
+          "Device disconnection error occurred",
+        [BluetoothErrorEnum.STOP_MEASUREMENT_ERROR]:
+          "An error occurred while stopping the measurement",
+        [BluetoothErrorEnum.START_MEASUREMENT_ERROR]:
+          "Could not start measurement",
+        [BluetoothErrorEnum.DETECTOR_SETUP_ERROR]:
+          "An error occurred while setting up detectors",
+        [BluetoothErrorEnum.MEASUREMENT_ERROR]:
+          "An error occurred while measuring",
+        [BluetoothErrorEnum.LIDAR_SETUP_ERROR]: "Could not set up lidar",
+        [BluetoothErrorEnum.LUNA_SETUP_ERROR]: "Could not set up luna",
+        [BluetoothErrorEnum.ULTRASONIC_SETUP_ERROR]:
+          "Could not set up ultrasonic",
+        [CommandResultEnum.ERROR]: "An error occurred",
+        [CommandResultEnum.ACTION_NOT_NECESSARY]: "Action not necessary",
+        [CommandResultEnum.I2C_ERROR]: "I2C error occurred",
+        [CommandResultEnum.LIDAR_ERROR]: "Lidar error occurred",
+        [CommandResultEnum.LIDAR_RESOLUTION_ERROR]:
+          "LiDAR resolution error occurred",
+        [CommandResultEnum.LIDAR_RANGING_MODE_ERROR]:
+          "LiDAR ranging mode error occurred",
+        [CommandResultEnum.LIDAR_POWER_MODE_ERROR]:
+          "LiDAR power mode error occurred",
+        [CommandResultEnum.LIDAR_INTEGRATION_TIME_ERROR]:
+          "LiDAR integration time error occurred",
+        [CommandResultEnum.LIDAR_SHARPENER_ERROR]:
+          "LiDAR sharpener error occurred",
+        [CommandResultEnum.LIDAR_TARGET_ORDER_ERROR]:
+          "LiDAR target order error occurred",
+        [CommandResultEnum.LIDAR_RANGING_ERROR]: "LiDAR ranging error occurred",
+        [CommandResultEnum.LIDAR_MEASUREMENT_ERROR]:
+          "LiDAR measurement error occurred",
+        [CommandResultEnum.LUNA_MEASUREMENT_ERROR]:
+          "Luna measurement error occurred",
+        [CommandResultEnum.NO_DETECTORS_CONFIGURED_ERROR]:
+          "No detectors configured",
+        [CommandResultEnum.BLUETOOTH_ERROR]: "Bluetooth error occurred",
+      },
+      [ToastType.WARNING]: {
+        DEVICE_DISCONNECTED: "Device disconnected",
+      },
     },
   },
 };

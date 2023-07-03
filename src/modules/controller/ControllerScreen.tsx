@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { readValue } from "../../services/StorageService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StorageKeysEnum } from "../../models/enums/StorageKeysEnum";
-import { filter, first, switchMap, tap } from "rxjs";
+import { filter, switchMap, take, tap } from "rxjs";
 import {
   bluetoothError$,
   bluetoothInitialized$,
@@ -17,12 +17,14 @@ import {
 import { BluetoothDeviceData } from "../../models/BluetoothDeviceData";
 import DeviceInfo from "./components/DeviceInfo";
 import { ConnectionStatus } from "../../models/enums/ConnectionStatus";
-import { useToast } from "react-native-toast-notifications";
 import NavBar from "../common/NavBar";
 import WavyBackground from "../common/WavyBackground";
 import { ColorsEnum } from "../../models/enums/ColorsEnum";
 import ActionButton from "../common/ActionButton";
 import useLanguage from "../../language/LanguageHook";
+import { showToast } from "../../services/ToastService";
+import { ErrorEnum } from "../../models/enums/ErrorEnum";
+import { ToastType } from "../../models/enums/ToastType";
 
 const ControllerScreen = ({ navigation }: any) => {
   const LANGUAGE = useLanguage();
@@ -32,8 +34,6 @@ const ControllerScreen = ({ navigation }: any) => {
     ConnectionStatus.DISCONNECTED
   );
   const [loading, setLoading] = useState(true);
-
-  const toast = useToast();
 
   useEffect(() => {
     const subscription = bluetoothInitialized$
@@ -51,9 +51,10 @@ const ControllerScreen = ({ navigation }: any) => {
         }),
         filter(Boolean),
         switchMap((_) => connectedDevice$),
+        take(1),
         tap((device) => {
-          setConnectionStatus(
-            !!device
+          setConnectionStatus((oldStatus) =>
+            oldStatus === ConnectionStatus.CONNECTING && !!device
               ? ConnectionStatus.CONNECTED
               : ConnectionStatus.DISCONNECTED
           );
@@ -66,43 +67,39 @@ const ControllerScreen = ({ navigation }: any) => {
 
   useEffect(() => {
     const subscription = deviceHasDisconnected$.subscribe(() => {
-      console.log("Handling deviceHasDisconnected$ signal - controller");
       setConnectionStatus(ConnectionStatus.DISCONNECTED);
     });
 
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
+    return () => subscription.unsubscribe();
+  }, [connectionStatus]);
 
   useEffect(() => {
     const subscription = bluetoothError$.subscribe((error) => {
-      console.log("Handling bluetoothError$ signal - controller: ", error);
       setConnectionStatus(ConnectionStatus.DISCONNECTED);
     });
 
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
+    return () => subscription.unsubscribe();
+  }, [connectionStatus]);
 
   const handleMeasure = () => {
     if (bluetoothDevice && connectionStatus === ConnectionStatus.CONNECTED) {
       navigation.navigate(ScreenNamesEnum.MEASUREMENT);
     } else {
-      toast.show("Please connect to device first", { type: "danger" });
+      showToast(ErrorEnum.DEVICE_NOT_CONNECTED, ToastType.DANGER);
     }
   };
 
   const handleConnect = () => {
     setLoading(true);
+    setConnectionStatus(ConnectionStatus.CONNECTING);
     reconnectDevice()
       .pipe(
-        first(),
+        take(1),
         switchMap((_) => connectedDevice$),
+        take(1),
         tap((device) => {
-          setConnectionStatus(
-            !!device
+          setConnectionStatus((oldStatus) =>
+            oldStatus === ConnectionStatus.CONNECTING && !!device
               ? ConnectionStatus.CONNECTED
               : ConnectionStatus.DISCONNECTED
           );
@@ -146,7 +143,9 @@ const ControllerScreen = ({ navigation }: any) => {
           title={LANGUAGE ? LANGUAGE.CONTROLLER.BEGIN_PARKING : ""}
           action={handleMeasure}
           disabled={
-            !bluetoothDevice || connectionStatus !== ConnectionStatus.CONNECTED
+            !bluetoothDevice ||
+            connectionStatus !== ConnectionStatus.CONNECTED ||
+            loading
           }
         />
       </View>
